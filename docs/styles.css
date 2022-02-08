@@ -11,5 +11,7 @@
 
 .fixed {
   max-width: 150px;
-  min-width: 100px;
+  /* max-width: 80%; */
+  /* max-width: 80vw; */
+  /* min-width: 80%; */
 }
