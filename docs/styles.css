@@ -9,9 +9,27 @@
   /* font-size: 12px; */
 }
 
+.exercise {
+  font-size: 50px;
+}
+
 .fixed {
-  max-width: 150px;
+  max-width: 140px;
+
   /* max-width: 80%; */
   /* max-width: 80vw; */
   /* min-width: 80%; */
+}
+
+.icon {
+  font-size: 30px;
+  text-align: center;
+}
+
+.correct {
+  color: green;
+}
+
+.incorrect {
+  color: red;
 }

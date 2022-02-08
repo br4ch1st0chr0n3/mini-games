@@ -15,24 +15,19 @@
 </head>
 
 <body>
-  <div class="row justify-content-center">
-    <div class="col-4 fixed">
-      <table class="table table-borderless">
-        <tr>
-          <td>
-            <i class="bi bi-check-circle pe-2"></i><span id="correct">0</span>
-          </td>
-          <td>
-            <i class="bi bi-x-circle pe-2"></i><span id="incorrect">0</span>
-          </td>
-        </tr>
-      </table>
+  <div class="row justify-content-center pb-4">
+    <div class="col-3 fixed icon">
+      <i class="bi bi-check-circle-fill pe-2 correct"></i><span id="correct">0</span>
+    </div>
+    <div class="col-3 fixed icon">
+      <i class="bi bi-x-circle-fill pe-2 incorrect"></i><span id="incorrect">0</span>
     </div>
   </div>
 
-  <div id="task" class="row justify-content-center pt-2 pb-2">
+
+  <div id="task" class="row justify-content-center pt-2 pb-4">
     <div class="col-12">
-      <p class="fs-1 fw-bolder text-center">
+      <p class="fw-bolder text-center exercise">
         <span id="first_number">1</span>
         <span>+</span>
         <span id="second_number">1</span>
