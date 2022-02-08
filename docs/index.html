@@ -15,75 +15,77 @@
 </head>
 
 <body>
-  <div class="row justify-content-center pb-4 pt-4">
-    <div class="col-3 fixed icon">
-      <i class="bi bi-check-circle-fill pe-2 correct"></i><span id="correct">0</span>
-    </div>
-    <div class="col-3 fixed icon">
-      <i class="bi bi-x-circle-fill pe-2 incorrect"></i><span id="incorrect">0</span>
-    </div>
-  </div>
-
-
-  <div id="task" class="row justify-content-center pt-2 pb-4">
-    <div class="col-10">
-      <p class="fw-bolder text-center exercise">
-        <span id="first_number">1</span>
-        <span>+</span>
-        <span id="second_number">1</span>
-        <span>=</span>
-        <span id="answer">?</span>
-      </p>
-    </div>
-  </div>
-
-  <div id="keyboard">
-    <div class="row justify-content-center pt-2 pb-2">
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(1)">1</button>
+  <div class="container-fluid">
+    <div class="row justify-content-center pb-4 pt-4">
+      <div class="col-3 fixed icon">
+        <i class="bi bi-check-circle-fill pe-2 correct"></i><span id="correct">0</span>
       </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(2)">2</button>
-      </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(3)">3</button>
+      <div class="col-3 fixed icon">
+        <i class="bi bi-x-circle-fill pe-2 incorrect"></i><span id="incorrect">0</span>
       </div>
     </div>
 
-    <div class="row justify-content-center pt-2 pb-2">
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(4)">4</button>
-      </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(5)">5</button>
-      </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(6)">6</button>
+
+    <div id="task" class="row justify-content-center pt-2 pb-4">
+      <div class="col-10">
+        <p class="fw-bolder text-center exercise">
+          <span id="first_number">1</span>
+          <span>+</span>
+          <span id="second_number">1</span>
+          <span>=</span>
+          <span id="answer">?</span>
+        </p>
       </div>
     </div>
 
-    <div class="row justify-content-center pt-2 pb-2">
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(7)">7</button>
+    <div id="keyboard">
+      <div class="row justify-content-center pt-2 pb-2">
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(1)">1</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(2)">2</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(3)">3</button>
+        </div>
       </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(8)">8</button>
-      </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(9)">9</button>
-      </div>
-    </div>
 
-    <div class="row justify-content-center pt-2 pb-2">
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="delete_digit()">
-          <i class="bi bi-backspace-fill"></i>
-        </button>
+      <div class="row justify-content-center pt-2 pb-2">
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(4)">4</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(5)">5</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(6)">6</button>
+        </div>
       </div>
-      <div class="col-3 d-grid fixed">
-        <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(0)">0</button>
+
+      <div class="row justify-content-center pt-2 pb-2">
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(7)">7</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(8)">8</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(9)">9</button>
+        </div>
       </div>
-      <div class="col-3 d-grid fixed">
+
+      <div class="row justify-content-center pt-2 pb-2">
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="delete_digit()">
+            <i class="bi bi-backspace-fill"></i>
+          </button>
+        </div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="add_digit(0)">0</button>
+        </div>
+        <div class="col-3 d-grid fixed">
+        </div>
       </div>
     </div>
   </div>
