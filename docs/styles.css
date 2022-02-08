@@ -1,0 +1,15 @@
+.btn-square {
+  width: 90px !important;
+  /* max-width: 100% !important; */
+  /* max-height: 100% !important; */
+  height: 90px !important;
+  font-size: 30px;
+  /* text-align: center; */
+  /* padding: 0px; */
+  /* font-size: 12px; */
+}
+
+.fixed {
+  max-width: 150px;
+  min-width: 100px;
+}
