@@ -1,7 +1,9 @@
 let no_answer = '?'
 
-var correct = 0
-var incorrect = 0
+
+var model = {}
+model.correct = 0
+model.incorrect = 0
 
 set_new_task()
 
@@ -13,7 +15,7 @@ function add_digit(i) {
   }
   new_answer = current_answer.concat(i.toString())
   answer_node.textContent = new_answer
-  validate(new_answer)
+  validate_answer(new_answer)
 }
 
 function delete_digit() {
@@ -23,7 +25,7 @@ function delete_digit() {
   answer_node.textContent = new_answer
 }
 
-function validate(answer) {
+function validate_answer(answer) {
   first_number = parseInt(document.getElementById('first_number').textContent)
   second_number = parseInt(document.getElementById('second_number').textContent)
   result = first_number + second_number
@@ -32,9 +34,9 @@ function validate(answer) {
     if (result_string !== answer) {
       setTimeout(show_correct_answer, 1000, result_string)
       answer_node.style.color = 'red'
-      incorrect += 1
+      model.incorrect += 1
     } else {
-      correct += 1
+      model.correct += 1
     }
     setTimeout(update_counters, 1000)
     setTimeout(set_new_task, 2000)
@@ -63,9 +65,19 @@ function set_new_task() {
 }
 
 function update_counters() {
-  document.getElementById('correct').textContent = correct.toString()
-  document.getElementById('incorrect').textContent = incorrect.toString()
+  document.getElementById('correct').textContent = model.correct.toString()
+  document.getElementById('incorrect').textContent = model.incorrect.toString()
 }
+
+// handle settings open
+
+model.settings_open = false
+
+function update_settings_open() {
+    model.settings_open = !model.settings_open
+}
+
+// handle key presses
 
 let key_codes = new Map()
 
@@ -78,7 +90,7 @@ let backspace = 'backspace'
 key_codes.set(8, backspace)
 
 document.addEventListener('keydown', function (event) {
-  if (key_codes.has(event.keyCode)) {
+  if (key_codes.has(event.keyCode) && model.settings_open === false) {
     value = key_codes.get(event.keyCode)
     if (value === 'backspace') {
       delete_digit()
@@ -87,3 +99,28 @@ document.addEventListener('keydown', function (event) {
     }
   }
 })
+
+function insert_after(new_node, reference_node) {
+  reference_node.parentNode.insertBefore(new_node, reference_node.nextSibling);
+}
+
+function validate_input(id_min, id_max, id_current){
+  input1 = document.getElementById(id_min)
+  input2 = document.getElementById(id_max)
+  number1 = parseInt(input1.value)
+  number2 = parseInt(input2.value)
+  if (number2 < number1){
+    if (id_min === id_current) {
+      input2.classList.add('is-invalid')
+      input1.classList.remove('is-invalid')
+    }
+    else if (id_max === id_current) {
+      input1.classList.add('is-invalid')
+      input2.classList.remove('is-invalid')
+    }
+  }
+  else {
+    input1.classList.remove('is-invalid')
+    input2.classList.remove('is-invalid')
+  }
+}

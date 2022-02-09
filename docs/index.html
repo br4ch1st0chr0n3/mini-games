@@ -21,7 +21,7 @@
     <div class="row justify-content-center pb-2 pt-4">
       <div class="col-3 fixed my-auto">
         <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom"
-          aria-controls="offcanvasBottom">
+          aria-controls="offcanvasBottom" onclick="update_settings_open()">
           <i class="bi bi-gear-fill icon"></i>
         </button>
       </div>
@@ -114,16 +114,16 @@
         <div class="col-3 d-grid fixed"></div>
       </div>
 
-
-      <div class="offcanvas offcanvas-top h-75" tabindex="-1" id="offcanvasBottom"
+      <div class="offcanvas offcanvas-top h-auto" tabindex="-1" id="offcanvasBottom"
         aria-labelledby="offcanvasBottomLabel">
-      <!-- <div> -->
+        <!-- <div> -->
         <div class="row justify-content-center">
           <div class="offcanvas-header col settings ms-2 me-2">
             <h5 class="offcanvas-title" id="offcanvasBottomLabel">
               Settings
             </h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"
+              onclick="update_settings_open()"></button>
           </div>
         </div>
         <div class="offcanvas-body" id="settings_body">
@@ -132,19 +132,19 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid"
-                      placeholder="0" value="0" />
-                    <label for="floatingInputGrid">Min</label>
+                    <input type="number" class="form-control" id="a_min" placeholder="0" value="0"
+                      oninput="validate_input('a_min','a_max','a_min')" />
+                    <label for="a_min">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center pb-2">
-                  <button class="btn">a</button>
+                  <button class="btn btn-outline-primary">a</button>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid"
-                      placeholder="0" value="10" />
-                    <label for="floatingInputGrid">Max</label>
+                    <input type="number" class="form-control" id="a_max" placeholder="0" value="10"
+                      oninput="validate_input('a_min','a_max','a_max')" />
+                    <label for="a_max">Max</label>
                   </div>
                 </div>
               </div>
@@ -171,20 +171,20 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid"
-                      placeholder="0" value="0" />
+                    <input type="number" class="form-control" id="b_min" placeholder="0" value="0"
+                      oninput="validate_input('b_min','b_max','b_min')" />
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
                   <div class="pb-2">
-                    <button class="btn">b</button>
+                    <button class="btn btn-outline-primary">b</button>
                   </div>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid"
-                      placeholder="0" value="10" />
+                    <input type="number" class="form-control" id="b_max" placeholder="0" value="10"
+                      oninput="validate_input('b_min','b_max','b_max')" />
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>
@@ -215,20 +215,18 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid"
-                      placeholder="0" value="0" />
+                    <input type="number" class="form-control" id="c_min" placeholder="0" value="0" oninput="validate_input('c_min','c_max','c_min')"/>
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
                   <div class="pb-2">
-                    <button class="btn">c</button>
+                    <button class="btn btn-outline-primary">c</button>
                   </div>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid"
-                      placeholder="0" value="10" />
+                    <input type="number" class="form-control" id="c_max" placeholder="0" value="10" oninput="validate_input('c_min','c_max','c_max')"/>
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>
