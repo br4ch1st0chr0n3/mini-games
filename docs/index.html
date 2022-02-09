@@ -116,7 +116,7 @@
 
       <!-- <div class="offcanvas offcanvas-bottom h-75" tabindex="-1" id="offcanvasBottom"
         aria-labelledby="offcanvasBottomLabel"> -->
-        <div>
+      <div>
         <div class="row justify-content-center">
           <div class="offcanvas-header col settings ms-2 me-2">
             <h5 class="offcanvas-title" id="offcanvasBottomLabel">
@@ -138,7 +138,7 @@
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center pb-2">
-                  <button class="btn btn-outline-primary" id="a_term">a</button>
+                  <button class="btn btn-outline-primary" id="a_term" onclick="toggle_term('a_term')">a</button>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
@@ -148,20 +148,22 @@
                   </div>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col my-auto text-center">
                   <div class="btn-group pb-2" id="arithmetical_operators">
                     <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('plus')" id="plus">
                       &plus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('minus')" id="minus">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('minus')"
+                      id="minus">
                       &minus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('times')" id="times">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('times')"
+                      id="times">
                       &times;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('divide')" id="divide">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('divide')"
+                      id="divide">
                       &divide;
                     </button>
                   </div>
@@ -174,11 +176,11 @@
                     <input type="number" class="form-control" id="b_min" placeholder="0" value="0"
                       oninput="validate_input('b_min','b_max','b_min')" />
                     <label for="floatingInputGrid">Min</label>
-                  </div> 
+                  </div>
                 </div>
                 <div class="col-2 my-auto text-center">
                   <div class="pb-2">
-                    <button class="btn btn-outline-primary" id="b_term">b</button>
+                    <button class="btn btn-outline-primary" id="b_term" onclick="toggle_term('b_term')">b</button>
                   </div>
                 </div>
                 <div class="col-5 my-auto text-center">
@@ -190,7 +192,7 @@
                 </div>
               </div>
 
-              <div class="row"> 
+              <div class="row">
                 <div class="col my-auto text-center">
                   <div class="btn-group pb-2" id="comparison_operators">
                     <button type="button" class="btn btn-outline-primary" onclick="toggle_operation('eq')" id="eq">
@@ -215,18 +217,20 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="c_min" placeholder="0" value="0" oninput="validate_input('c_min','c_max','c_min')"/>
+                    <input type="number" class="form-control" id="c_min" placeholder="0" value="0"
+                      oninput="validate_input('c_min','c_max','c_min')" />
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
                   <div class="pb-2">
-                    <button class="btn btn-outline-primary" id="c_term">c</button>
+                    <button class="btn btn-outline-primary" id="c_term" onclick="toggle_term('c_term')">c</button>
                   </div>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="c_max" placeholder="0" value="10" oninput="validate_input('c_min','c_max','c_max')"/>
+                    <input type="number" class="form-control" id="c_max" placeholder="0" value="10"
+                      oninput="validate_input('c_min','c_max','c_max')" />
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>

@@ -4,7 +4,36 @@ var model = {}
 model.correct = 0
 model.incorrect = 0
 
-set_new_task()
+// handle settings open
+
+model.settings_open = false
+
+let key_codes = get_keycodes()
+
+let btn_selected = 'btn-primary'
+let btn_unselected = 'btn-outline-primary'
+
+model.selected_terms = new Set()
+
+let a_term_id = 'a_term'
+let b_term_id = 'b_term'
+let c_term_id = 'c_term'
+
+model.terms = [a_term_id, b_term_id, c_term_id]
+
+let a_min_id = 'a_min'
+let b_min_id = 'b_min'
+let c_min_id = 'c_min'
+
+let a_max_id = 'a_max'
+let b_max_id = 'b_max'
+let c_max_id = 'c_max'
+
+let min_suffix = '_min'
+let max_suffix = '_max'
+
+let btn_need_select = 'btn-danger'
+let btn_inactive = 'btn-secondary'
 
 function add_digit(i) {
   answer_node = document.getElementById('answer')
@@ -68,25 +97,24 @@ function update_counters() {
   document.getElementById('incorrect').textContent = model.incorrect.toString()
 }
 
-// handle settings open
-
-model.settings_open = false
-
 function update_settings_open() {
   model.settings_open = !model.settings_open
 }
 
 // handle key presses
 
-let key_codes = new Map()
+function get_keycodes() {
+  let key_codes = new Map()
 
-for (let i = 0; i <= 9; i++) {
-  key_codes.set(48 + i, i)
+  for (let i = 0; i <= 9; i++) {
+    key_codes.set(48 + i, i)
+  }
+
+  let backspace = 'backspace'
+
+  key_codes.set(8, backspace)
+  return key_codes
 }
-
-let backspace = 'backspace'
-
-key_codes.set(8, backspace)
 
 document.addEventListener('keydown', function (event) {
   if (key_codes.has(event.keyCode) && model.settings_open === false) {
@@ -105,6 +133,9 @@ function insert_after(new_node, reference_node) {
 
 // validate that min value is less than max
 // show error
+
+let invalid = 'is-invalid'
+
 function validate_input(id_min, id_max, id_current) {
   let input1 = document.getElementById(id_min)
   let input2 = document.getElementById(id_max)
@@ -112,72 +143,58 @@ function validate_input(id_min, id_max, id_current) {
   let number2 = parseInt(input2.value)
   if (number2 < number1) {
     if (id_min === id_current) {
-      input2.classList.add('is-invalid')
-      input1.classList.remove('is-invalid')
+      input2.classList.add(invalid)
+      input1.classList.remove(invalid)
     } else if (id_max === id_current) {
-      input1.classList.add('is-invalid')
-      input2.classList.remove('is-invalid')
+      input1.classList.add(invalid)
+      input2.classList.remove(invalid)
     }
   } else {
-    input1.classList.remove('is-invalid')
-    input2.classList.remove('is-invalid')
+    input1.classList.remove(invalid)
+    input2.classList.remove(invalid)
   }
+  select_third()
 }
-
-let btn_selected = 'btn-primary'
-let btn_unselected = 'btn-outline-primary'
 
 function toggle_term(id) {
   let node = document.getElementById(id)
+  // for initial setup
   if (node.classList.contains(btn_unselected)) {
+    model.selected_terms.add(id)
     node.classList.remove(btn_unselected)
     node.classList.add(btn_selected)
-  } else {
-    node.classList.add(btn_unselected)
-    node.classList.remove(btn_selected)
   }
-  if (model.selected_terms.has(id)) {
+  else if (node.classList.contains(btn_selected)) {
     model.selected_terms.delete(id)
-  } else {
+    
+    // both nodes need to be selected
+    for (term of model.terms) {
+      if (!model.selected_terms.has(term)) {
+        let term_node = document.getElementById(term)
+        term_node.classList.remove(btn_selected, btn_inactive)
+        term_node.classList.add(btn_need_select)
+        term_node.removeAttribute("disabled")
+        
+        let term_min_node = document.getElementById(term[0] + min_suffix)
+        let term_max_node = document.getElementById(term[0] + max_suffix)
+        
+        term_min_node.removeAttribute("disabled")
+        term_max_node.removeAttribute("disabled")
+      }
+    }
+  }
+  else if (node.classList.contains(btn_need_select)){
     model.selected_terms.add(id)
+    node.classList.remove(btn_need_select)
+    node.classList.add(btn_selected)
   }
   if (model.selected_terms.size === 2) {
     select_third()
-  } else {
-    // TODO: trigger red danger
-    // for (e of model.)
   }
 }
 
-model.selected_terms = new Set()
-
-let a_term_id = 'a_term'
-let b_term_id = 'b_term'
-let c_term_id = 'c_term'
-
-model.terms = [a_term_id, b_term_id, c_term_id]
-
-let a_min_id = 'a_min'
-let b_min_id = 'b_min'
-let c_min_id = 'c_min'
-
-let a_max_id = 'a_max'
-let b_max_id = 'b_max'
-let c_max_id = 'c_max'
-
-let min_suffix = '_min'
-let max_suffix = '_max'
-
-let btn_need_select = 'btn-danger'
-let btn_inactive = 'btn-secondary'
-
-// given terms for 
-//  a and b, determine range for c
-//  a and c, determine range for b
-//  b and c, determine range for a
-
 function select_third() {
-  if (model.terms.size === 0) {
+  if (model.selected_terms.size < 2) {
     return
   }
   
@@ -187,20 +204,21 @@ function select_third() {
       t = term
     }
   }
+  
+  // that the third term is selected isn't recorded in the model
   let node = document.getElementById(t)
   let node_min = document.getElementById(t[0] + min_suffix)
   let node_max = document.getElementById(t[0] + max_suffix)
 
-  node.classList.remove(btn_need_select)
-  node.classList.remove(btn_unselected)
+  node.classList.remove(btn_need_select, btn_unselected)
   node.classList.add(btn_inactive)
 
-  node_min.setAttribute('readonly', 'true')
-  node_max.setAttribute('readonly', 'true')
-
   range = get_range()
-  node_min.value = range.min === Number.NaN ? infinity : range_min
-  node_max.value = range.max === Number.NaN ? infinity : range_max
+  node_min.value = isNaN(range.min) ? infinity : range_min
+  node_max.value = isNaN(range.max) ? infinity : range_max
+
+  node_min.setAttribute("disabled", "true")
+  node_max.setAttribute("disabled", "true")
 }
 
 let plus = 'plus'
@@ -218,14 +236,24 @@ let lt = 'lt'
 let gt = 'gt'
 let infinity = '?'
 
+model.comparisons = [eq, geq, leq, lt, gt]
+model.selected_comparisons = new Set()
+
+
+// given terms for
+//  a and b, determine range for c
+//  a and c, determine range for b
+//  b and c, determine range for a
+
+
 function get_range() {
   terms = model.selected_terms
   operations = model.selected_operations
   if (terms.has(a_term_id) && terms.has(b_term_id)) {
-    let a_min = parse_int(document.getElementById(a_min_id).value)
-    let b_min = parse_int(document.getElementById(b_min_id).value)
-    let a_max = parse_int(document.getElementById(a_max_id).value)
-    let b_max = parse_int(document.getElementById(b_max_id).value)
+    let a_min = parseInt(document.getElementById(a_min_id).value)
+    let b_min = parseInt(document.getElementById(b_min_id).value)
+    let a_max = parseInt(document.getElementById(a_max_id).value)
+    let b_max = parseInt(document.getElementById(b_max_id).value)
 
     range_min = Number.MAX_VALUE
     range_max = Number.MIN_VALUE
@@ -271,6 +299,10 @@ function get_range() {
       max: range_max === Number.MIN_VALUE ? NaN : range_max,
     }
   }
+  else return {
+    min: NaN,
+    max: NaN
+  }
 }
 
 function toggle_operation(id) {
@@ -290,6 +322,10 @@ function toggle_operation(id) {
 function init_terms() {
   toggle_term(a_term_id)
   toggle_term(b_term_id)
+  toggle_operation(plus)
+  toggle_operation(eq)
+  select_third()
 }
 
+set_new_task()
 init_terms()
