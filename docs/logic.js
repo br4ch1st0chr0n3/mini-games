@@ -299,7 +299,7 @@ function get_range() {
             }
             if (op === divide) {
               let b_number = b
-              if (i === 0) {
+              if (i === 0 && b === 0) {
                 b_number = i === 0 ? 1 : -1
               }
               range_min = Math.min(range_min, Math.ceil(a / b_number))
@@ -309,6 +309,7 @@ function get_range() {
         }
       }
     }
+
     return {
       min: range_min === Number.MAX_VALUE ? NaN : range_min,
       max: range_max === Number.MIN_VALUE ? NaN : range_max,
