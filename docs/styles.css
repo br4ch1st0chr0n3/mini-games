@@ -17,7 +17,7 @@
   font-size: 50px;
 }
 
-.btn:focus, .btn:hover, .btn:active:focus {
+.btn:focus, .btn:active {
   outline: none;
   box-shadow: none;
 }
