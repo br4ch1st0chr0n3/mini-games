@@ -9,6 +9,10 @@
   /* font-size: 12px; */
 }
 
+.settings {
+  max-width: 600px;
+}
+
 .exercise {
   font-size: 50px;
 }
