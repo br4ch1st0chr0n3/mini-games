@@ -125,18 +125,120 @@
           <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body" id="settings_body">
+          <div class="row justify-content-center pt-2 pb-2">
+            <div class="col-10">
+              <div class="row">
+                <div class="col-sm my-auto text-center">
+                  <div class="form-floating pb-2">
+                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid" placeholder="0"
+                      value="0" />
+                    <label for="floatingInputGrid">Min</label>
+                  </div>
+                </div>
+                <div class="col-sm my-auto text-center">
+                  <div class="pb-2">
+                    <button class="btn">a</button>
+                  </div>
+                </div>
+                <div class="col-sm my-auto text-center">
+                  <div class="form-floating pb-2">
+                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid" placeholder="0"
+                      value="10" />
+                    <label for="floatingInputGrid">Max</label>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="row">
+                <div class="col-sm my-auto text-center">
+                  <div class="btn-group pb-2" id="arithmetical_operators">
+                    <button type="button" class="btn btn-outline-primary">
+                      &plus;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &minus;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &times;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &divide;
+                    </button>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="row">
+                <div class="col-sm my-auto text-center">
+                  <div class="form-floating pb-2">
+                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid" placeholder="0"
+                      value="0" />
+                    <label for="floatingInputGrid">Min</label>
+                  </div>
+                </div>
+                <div class="col-sm my-auto text-center">
+                  <div class="pb-2">
+                    <button class="btn">b</button>
+                  </div>
+                </div>
+                <div class="col-sm my-auto text-center">
+                  <div class="form-floating pb-2">
+                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid" placeholder="0"
+                      value="10" />
+                    <label for="floatingInputGrid">Max</label>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="row">
+                <div class="col-sm my-auto text-center">
+                  <div class="btn-group pb-2" id="comparison_operators">
+                    <button type="button" class="btn btn-outline-primary">
+                      &equals;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &leq;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &geq;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &lt;
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                      &gt;
+                    </button>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="row">
+                <div class="col-sm my-auto text-center">
+                  <div class="form-floating pb-2">
+                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid" placeholder="0"
+                      value="0" />
+                    <label for="floatingInputGrid">Min</label>
+                  </div>
+                </div>
+                <div class="col-sm my-auto text-center">
+                  <div class="pb-2">
+                    <button class="btn">c</button>
+                  </div>
+                </div>
+                <div class="col-sm my-auto text-center">
+                  <div class="form-floating pb-2">
+                    <input type="number" pattern="^0|([1-9][0-9]*)$" class="form-control" id="floatingInputGrid" placeholder="0"
+                      value="10" />
+                    <label for="floatingInputGrid">Max</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <script>
-    $("#settings_body").load("settings_vertical.html");
-    // $(function () {
-      // settings_file = screen.width < 500 ? "settings_horizontal.html" : "settings_vertical.html"
-      // $("#settings_body").load(settings_file);
-    // });
-  </script>
   <script src="logic.js"></script>
 </body>
 
