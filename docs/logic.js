@@ -65,7 +65,9 @@ function add_digit(i) {
     current_answer = ''
   }
   new_answer = current_answer.concat(i.toString())
-  answer_node.textContent = new_answer
+  if (! isNaN(parseInt(new_answer))) {
+    answer_node.textContent = new_answer
+  }
   validate_answer(new_answer)
 }
 
@@ -286,7 +288,6 @@ function get_range() {
               continue
             }
             if (op === plus) {
-              console.log(a, b, a+b)
               range_min = Math.min(range_min, a + b)
               range_max = Math.max(range_max, a + b)
             }
