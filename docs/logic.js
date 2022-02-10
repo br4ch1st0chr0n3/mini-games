@@ -237,6 +237,7 @@ function select_third() {
   for (let term of model.terms) {
     if (!model.selected_terms.has(term)) {
       t = term
+      break
     }
   }
 
@@ -249,8 +250,8 @@ function select_third() {
   node.classList.add(btn_inactive)
 
   let range = get_range()
-  node_min.value = isNaN(range.min) ? infinity : range_min
-  node_max.value = isNaN(range.max) ? infinity : range_max
+  node_min.value = isNaN(range.min) ? infinity : range.min
+  node_max.value = isNaN(range.max) ? infinity : range.max
 
   node_min.setAttribute('disabled', 'true')
   node_max.setAttribute('disabled', 'true')
@@ -270,22 +271,24 @@ function get_range() {
     let a_max = parseInt(document.getElementById(a_max_id).value)
     let b_max = parseInt(document.getElementById(b_max_id).value)
 
-    range_min = Number.MAX_VALUE
-    range_max = Number.MIN_VALUE
+    console.log(a_min, a_max, b_min, b_max)
+
+    range_min = Number.MAX_SAFE_INTEGER
+    range_max = Number.MIN_SAFE_INTEGER
 
     let a_numbers = [a_min, a_max]
     let b_numbers = [b_min, b_max]
+
     for (let op of model.operations) {
       if (model.selected_operations.has(op)) {
         for (let a of a_numbers) {
           for (let i = 0; i < b_numbers.length; i++) {
             let b = b_numbers[i]
-
-            if (a === NaN || b === NaN) {
+            if (isNaN(a) || isNaN(b)) {
               continue
             }
-
             if (op === plus) {
+              console.log(a, b, a+b)
               range_min = Math.min(range_min, a + b)
               range_max = Math.max(range_max, a + b)
             }
@@ -298,8 +301,11 @@ function get_range() {
               range_max = Math.max(range_max, a * b)
             }
             if (op === divide) {
+              if (b_min === 0 && b_max === 0) {
+                continue
+              }
               let b_number = b
-              if (i === 0 && b === 0) {
+              if (b === 0) {
                 b_number = i === 0 ? 1 : -1
               }
               range_min = Math.min(range_min, Math.ceil(a / b_number))
@@ -335,12 +341,26 @@ function toggle_operation(id) {
   select_third()
 }
 
-function set_initial(){
+function set_initial() {
   document.getElementById(a_min_id).value = '0'
   document.getElementById(a_max_id).value = '10'
   document.getElementById(b_min_id).value = '0'
   document.getElementById(b_max_id).value = '10'
   set_new_task()
+}
+
+function toggle_comparison() {
+  let comp_node = document.getElementById(id)
+  if (comp_node.classList.contains(btn_selected)) {
+    comp_node.classList.remove(btn_selected)
+    comp_node.classList.add(btn_unselected)
+    model.selected_comparisons.delete(id)
+  } else {
+    comp_node.classList.remove(btn_unselected)
+    comp_node.classList.add(btn_selected)
+    model.selected_comparisons.add(id)
+  }
+  select_third()
 }
 
 function init_terms() {
