@@ -17,11 +17,6 @@
   font-size: 50px;
 }
 
-.btn:focus, .btn:active {
-  outline: none;
-  box-shadow: none;
-}
-
 .fixed {
   max-width: 100px;
 
