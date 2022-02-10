@@ -271,8 +271,6 @@ function get_range() {
     let a_max = parseInt(document.getElementById(a_max_id).value)
     let b_max = parseInt(document.getElementById(b_max_id).value)
 
-    console.log(a_min, a_max, b_min, b_max)
-
     range_min = Number.MAX_SAFE_INTEGER
     range_max = Number.MIN_SAFE_INTEGER
 
@@ -317,8 +315,8 @@ function get_range() {
     }
 
     return {
-      min: range_min === Number.MAX_VALUE ? NaN : range_min,
-      max: range_max === Number.MIN_VALUE ? NaN : range_max,
+      min: range_min === Number.MAX_SAFE_INTEGER ? NaN : range_min,
+      max: range_max === Number.MIN_SAFE_INTEGER ? NaN : range_max,
     }
   } else
     return {
