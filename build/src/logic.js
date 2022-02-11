@@ -267,20 +267,25 @@ function insertAfter(newNode, referenceNode) {
         referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     }
 }
-function disableIfInvalidRange(id) {
-    let nodeMin = parseIntNode(`${id[0]}_${MIN_SUFFIX}`);
-    let nodeMax = parseInt(`${id[0]}_${MAX_SUFFIX}`);
-    if (isNaN(nodeMin) || isNaN(nodeMax)) {
-        model.validRanges.delete(id);
-    }
-}
+// function updateIfValidRange(id: string) {
+//   let nodeMin = parseIntNode(`${id[0]}_${MIN_SUFFIX}`)
+//   let nodeMax = parseIntNode(`${id[0]}_${MAX_SUFFIX}`)
+//   if (isNaN(nodeMin) || isNaN(nodeMax)) {
+//     model.validRanges.delete(id)
+//   } else {
+//     model.validRanges.add(id)
+//   }
+// }
 // validate that min value is less than max
 // show error
 let INVALID = 'is-invalid';
+function update() {
+    maybeSetThird();
+    setNewTask();
+}
 function handleInput(termLetter, suffix) {
     validateInput(termLetter, suffix);
-    maybeSelectThird();
-    setNewTask();
+    update();
 }
 function validateInput(termLetter, suffix) {
     let idMin = `${termLetter}_${MIN_SUFFIX}`;
@@ -336,10 +341,10 @@ function toggleTerm(termName) {
         model.selectedTerms.add(id);
         node.classList.remove(BUTTON_NEED_SELECT);
         node.classList.add(BTN_SELECTED);
-        maybeSelectThird();
+        maybeSetThird();
     }
 }
-function maybeSelectThird() {
+function maybeSetThird() {
     if (model.selectedTerms.size == 2) {
         for (let t of model.terms) {
             if (!model.selectedTerms.has(t)) {
@@ -358,11 +363,12 @@ function maybeSelectThird() {
     let nodeMax = getById(`${t[0]}_${MAX_SUFFIX}`);
     node.classList.remove(BUTTON_NEED_SELECT, BTN_UNSELECTED);
     node.classList.add(BUTTON_INACTIVE);
-    node.setAttribute('disabled', 'true');
+    node.setAttribute(DISABLED, 'true');
     let range = getRange();
     nodeMin.value = isNaN(range.min) ? EMPTY_STRING : range.min.toString();
     nodeMax.value = isNaN(range.max) ? EMPTY_STRING : range.max.toString();
-    disableIfInvalidRange(t);
+    console.log(range);
+    // updateIfValidRange(t)
     nodeMin.setAttribute(DISABLED, 'true');
     nodeMax.setAttribute(DISABLED, 'true');
 }
@@ -381,7 +387,7 @@ function getRange() {
         let bMin = parseIntNode(B_MIN_ID);
         let aMax = parseIntNode(A_MAX_ID);
         let bMax = parseIntNode(B_MAX_ID);
-        // console.log(aMin, bMin, aMax, bMax)
+        console.log(aMin, bMin, aMax, bMax);
         let rangeMin = Number.MAX_SAFE_INTEGER;
         let rangeMax = Number.MIN_SAFE_INTEGER;
         let aNumbers = [aMin, aMax];
@@ -391,9 +397,9 @@ function getRange() {
                 for (let a of aNumbers) {
                     for (let i = 0; i < bNumbers.length; i++) {
                         let b = bNumbers[i];
-                        if (isNaN(a) || isNaN(b)) {
-                            continue;
-                        }
+                        // if (isNaN(a) || isNaN(b)) {
+                        //   continue
+                        // }
                         if (op === PLUS) {
                             rangeMin = Math.min(rangeMin, a + b);
                             rangeMax = Math.max(rangeMax, a + b);
@@ -441,6 +447,7 @@ function toggleOperation(id) {
         node.classList.add(BTN_SELECTED);
         model.selectedOperations.add(id);
     }
+    update();
 }
 function setInitial() {
     getById(A_MIN_ID).value = '0';
@@ -460,6 +467,7 @@ function toggleComparison(id) {
         node.classList.add(BTN_SELECTED);
         model.selectedComparisons.add(id);
     }
+    update();
 }
 function initTerms() {
     initialEnableTerm(A_TERM_ID);
@@ -467,7 +475,7 @@ function initTerms() {
     toggleOperation(PLUS);
     toggleComparison(EQ);
     setInitial();
-    maybeSelectThird();
+    maybeSetThird();
     setNewTask();
     startListenToKeys();
 }
