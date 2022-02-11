@@ -9,15 +9,14 @@ import {
   initTerms,
 } from './logic'
 
-initTerms()
-
 export {
-    addDigit as add_digit,
+    addDigit,
     deleteDigit,
     validateInput,
     updateSettingsOpen,
     toggleComparison,
     toggleOperation,
     toggleTerm,
+    initTerms
   } 
   

@@ -1,8 +1,7 @@
-
 interface Model {
   correct: number
   incorrect: number
-  settingsOpen: boolean
+  isSettingsOpen: boolean
   selectedTerms: Set<string>
   terms: Array<string>
   operations: Array<string>
@@ -10,6 +9,13 @@ interface Model {
   selectedOperations: Set<string>
   selectedComparisons: Set<string>
   validRanges: Set<string>
+  unknownTerm: null | string
+  number1: number
+  number2: number
+  correctAnswer: number
+  currentAnswer: string
+  currentOperation: null | string
+  currentComparison: null | string
 }
 
 // model.correct = 0
@@ -18,12 +24,26 @@ interface Model {
 // handle settings open
 
 // model.settings_open = false
-let noValue = '?'
+let NO_VALUE = '?'
+let BACKSPACE_CODE = 'Backspace'
 
-let keyCodes = getKeycodes()
+function getKeycodes() {
+  let keyCodes = new Map<string, string>()
 
-let btnSelected = 'btn-primary'
-let btnUnselected = 'btn-outline-primary'
+  for (let i = 0; i <= 9; i++) {
+    keyCodes.set(`Digit${i}`, `${i}`)
+  }
+
+  keyCodes.set(BACKSPACE_CODE, BACKSPACE_CODE)
+  keyCodes.set(MINUS_CODE, MINUS_CODE)
+
+  return keyCodes
+}
+
+let KEY_CODES = getKeycodes()
+
+let BTN_SELECTED = 'btn-primary'
+let BTN_UNSELECTED = 'btn-outline-primary'
 
 let A_TERM_ID = 'a_term'
 let B_TERM_ID = 'b_term'
@@ -41,9 +61,10 @@ let A_MAX_ID = 'a_max'
 let B_MAX_ID = 'b_max'
 let C_MAX_ID = 'c_max'
 
-let MIN_SUFFIX = '_min'
-let MAX_SUFFIX = '_max'
+let MIN_SUFFIX = 'min'
+let MAX_SUFFIX = 'max'
 let NUMBER_SUFFIX = '_number'
+let TERM_SUFFIX = 'term'
 
 let BUTTON_NEED_SELECT = 'btn-danger'
 let BUTTON_INACTIVE = 'btn-secondary'
@@ -60,10 +81,15 @@ let LT = 'lt'
 let GT = 'gt'
 let INFINITY = '?'
 
+let MINUS_SIGN = '-'
+let MINUS_CODE = 'Minus'
+
+let EMPTY_STRING = ''
+
 var model: Model = {
   correct: 0,
   incorrect: 0,
-  settingsOpen: false,
+  isSettingsOpen: false,
   selectedTerms: new Set(),
   terms: [A_TERM_ID, B_TERM_ID, C_TERM_ID],
   operations: [PLUS, MINUS, TIMES, DIVIDE],
@@ -71,42 +97,42 @@ var model: Model = {
   comparisons: [EQ, GEQ, LEQ, LT, GT],
   selectedComparisons: new Set(),
   validRanges: new Set(),
+  unknownTerm: null,
+  currentOperation: null,
+  currentComparison: null,
+  number1: NaN,
+  number2: NaN,
+  correctAnswer: NaN,
+  currentAnswer: '',
 }
-
-// function get_unknown_term() {
-//   if (model.selected_terms.size === 2) {
-//     for (let t of model.terms) {
-//       if (!model.selected_terms.has(t)) {
-//         return t
-//       }
-//     }
-//   }
-//   return NaN
-// }
 
 function getById(id: string) {
   return document.getElementById(id)
 }
 
-function addDigit(i: string) {
-  let answerNode = getById(C_NUMBER_ID)
-  let currentAnswer = answerNode!.textContent
-  if (currentAnswer === noValue) {
-    currentAnswer = ''
+function addMinus(id: string) {
+  // TODO
+}
+
+function addDigitOrMinus(i: string) {
+  if (model.unknownTerm == null) {
+    return
   }
-  let newAnswer = currentAnswer!.concat(i.toString())
-  if (!isNaN(parseInt(newAnswer)) && model.selectedTerms.size == 2) {
-    if (model.validRanges.has(i)) {
-      answerNode!.textContent = newAnswer
-    }
+  let newAnswer = model.currentAnswer.concat(i.toString())
+  let answerNode = getById(model.unknownTerm)
+  if (!isNaN(parseInt(newAnswer)) || newAnswer == MINUS_SIGN) {
+    answerNode!.textContent = newAnswer
   }
   validateAnswer(newAnswer)
 }
 
 function deleteDigit() {
-  let answerNode = getById(C_NUMBER_ID)
+  if (model.unknownTerm == null) {
+    return
+  }
+  let answerNode = getById(model.unknownTerm)
   let currentAnswer = answerNode!.textContent
-  let newAnswer = currentAnswer!.slice(0, -1)
+  let newAnswer = currentAnswer == null ? null : currentAnswer.slice(0, -1)
   answerNode!.textContent = newAnswer
 }
 
@@ -119,13 +145,18 @@ function parseIntNode(id: string) {
 }
 
 function validateAnswer(answer: string) {
-  let number1 = parseIntNode(A_NUMBER_ID)
-  let number2 = parseIntNode(B_NUMBER_ID)
-  let result = number1 + number2
-  let resultString = result.toString()
-  if (resultString.length === answer.length) {
-    if (resultString !== answer) {
-      setTimeout(showCorrectAnswer, 1000, resultString)
+  if (
+    model.unknownTerm == null ||
+    model.selectedTerms.size != 2 ||
+    model.currentOperation == null ||
+    model.currentComparison == null
+  ) {
+    return
+  }
+  let correctAnswer = model.correctAnswer.toString()
+  if (answer.length >= correctAnswer.length) {
+    if (correctAnswer != answer) {
+      setTimeout(showCorrectAnswer, 1000, correctAnswer)
       let answerNode = getById(C_NUMBER_ID)
       answerNode!.style.color = 'red'
       model.incorrect += 1
@@ -149,22 +180,62 @@ function getRandomInteger(min: number, max: number) {
   return Math.floor(rand)
 }
 
+function setCorrectAnswer(combination: string) {
+  let number1 = model.number1
+  let number2 = model.number2
+  let operationId = model.currentOperation
+  let ans = NaN
+  if (combination == 'ab') {
+    if (operationId == PLUS) {
+      ans = number1 + number2
+    } else if (operationId == MINUS) {
+      ans = number1 - number2
+    } else if (operationId == DIVIDE && number2 != 0) {
+      ans = number1 / number2
+    } else if (operationId == TIMES) {
+      ans = number1 * number2
+    }
+  } else if (combination == 'ac') {
+    if (operationId == PLUS) {
+      ans = number2 - number1
+    } else if (operationId == MINUS) {
+      ans = number1 - number2
+    } else if (operationId == DIVIDE && number2 != 0) {
+      ans = number1 / number2
+    } else if (operationId == TIMES) {
+      ans = number2 / number1
+    }
+  } else if (combination == 'bc') {
+    if (operationId == PLUS) {
+      ans = number2 - number1
+    } else if (operationId == MINUS) {
+      ans = number1 + number2
+    } else if (operationId == DIVIDE && number2 != 0) {
+      ans = number1 * number2
+    } else if (operationId == TIMES) {
+      ans = number2 / number1
+    }
+  }
+  model.correctAnswer = ans
+}
+
 function setNewTask() {
+  // TODO remember correct answer
   for (let t of model.terms) {
     if (model.selectedTerms.has(t)) {
-      let tMin = parseIntNode(t[0] + MIN_SUFFIX)
-      let tMax = parseIntNode(t[0] + MAX_SUFFIX)
+      let tMin = parseIntNode(`${t[0]}_${MIN_SUFFIX}`)
+      let tMax = parseIntNode(`${t[0]}_${MAX_SUFFIX}`)
 
-      let numberNode = getById(t[0] + NUMBER_SUFFIX)
+      let numberNode = getById(`${t[0]}_${NUMBER_SUFFIX}`)
 
       if (isNaN(tMin) || isNaN(tMax)) {
-        numberNode!.textContent = noValue
+        numberNode!.textContent = NO_VALUE
       } else {
         numberNode!.textContent = getRandomInteger(tMin, tMax).toString()
       }
     } else {
-      let numberNode = getById(t[0] + NUMBER_SUFFIX)
-      numberNode!.textContent = noValue
+      let numberNode = getById(`${t[0]}_${NUMBER_SUFFIX}`)
+      numberNode!.textContent = NO_VALUE
       numberNode!.removeAttribute('style')
     }
   }
@@ -175,35 +246,26 @@ function updateCounters() {
   getById('incorrect')!.textContent = model.incorrect.toString()
 }
 
-function updateSettingsOpen() {
-  model.settingsOpen = !model.settingsOpen
+function toggleSettingsOpen() {
+  model.isSettingsOpen = !model.isSettingsOpen
 }
 
 // handle key presses
 
-function getKeycodes() {
-  let keyCodes = new Map()
-
-  for (let i = 0; i <= 9; i++) {
-    keyCodes.set(48 + i, i)
-  }
-
-  let backspace = 'backspace'
-
-  keyCodes.set(8, backspace)
-  return keyCodes
-}
-
-document.addEventListener('keydown', function (event) {
-  if (keyCodes.has(event.keyCode) && model.settingsOpen === false) {
-    let value = keyCodes.get(event.keyCode)
-    if (value === 'backspace') {
-      deleteDigit()
-    } else {
-      addDigit(value)
+function startListenToKeys() {
+  document.addEventListener('keydown', function (event) {
+    if (KEY_CODES.has(event.code) && !model.isSettingsOpen) {
+      let code = KEY_CODES.get(event.code)
+      if (code == BACKSPACE_CODE) {
+        deleteDigit()
+      } else if (code == MINUS_CODE){
+        addDigitOrMinus(MINUS_SIGN)
+      } else if (code != null){
+        addDigitOrMinus(code)
+      }
     }
-  }
-})
+  })
+}
 
 function insertAfter(newNode: HTMLElement, referenceNode: HTMLElement) {
   if (referenceNode.parentNode != null) {
@@ -212,8 +274,8 @@ function insertAfter(newNode: HTMLElement, referenceNode: HTMLElement) {
 }
 
 function disableIfInvalidRange(id: string) {
-  let nodeMin = parseIntNode(id[0] + MIN_SUFFIX)
-  let nodeMax = parseInt(id[0] + MAX_SUFFIX)
+  let nodeMin = parseIntNode(`${id[0]}_${MIN_SUFFIX}`)
+  let nodeMax = parseInt(`${id[0]}_${MAX_SUFFIX}`)
 
   if (isNaN(nodeMin) || isNaN(nodeMax)) {
     model.validRanges.delete(id)
@@ -223,49 +285,52 @@ function disableIfInvalidRange(id: string) {
 // validate that min value is less than max
 // show error
 
-let invalid = 'is-invalid'
+let INVALID = 'is-invalid'
 
-function validateInput(idMin: string, idMax: string, idCurrent: string) {
+function validateInput(termLetter: string, suffix: string) {
+  let idMin = `${termLetter}_${MIN_SUFFIX}`
+  let idMax = `${termLetter}_${MAX_SUFFIX}`
+  let idCurrent = `${termLetter}_${suffix}`
   let input1 = getById(idMin)
   let input2 = getById(idMax)
   let number1 = parseIntNode(idMin)
   let number2 = parseIntNode(idMax)
   if (number2 < number1) {
     if (idMin === idCurrent) {
-      input2!.classList.add(invalid)
-      input1!.classList.remove(invalid)
+      input2!.classList.add(INVALID)
+      input1!.classList.remove(INVALID)
     } else if (idMax === idCurrent) {
-      input1!.classList.add(invalid)
-      input2!.classList.remove(invalid)
+      input1!.classList.add(INVALID)
+      input2!.classList.remove(INVALID)
     }
   } else {
-    input1!.classList.remove(invalid)
-    input2!.classList.remove(invalid)
+    input1!.classList.remove(INVALID)
+    input2!.classList.remove(INVALID)
   }
-  setNewTask()
   selectThird()
+  setNewTask()
 }
 
 function toggleTerm(id: string) {
   let node = getById(id)
   // for initial setup
-  if (node!.classList.contains(btnUnselected)) {
+  if (node!.classList.contains(BTN_UNSELECTED)) {
     model.selectedTerms.add(id)
-    node!.classList.remove(btnUnselected)
-    node!.classList.add(btnSelected)
-  } else if (node!.classList.contains(btnSelected)) {
+    node!.classList.remove(BTN_UNSELECTED)
+    node!.classList.add(BTN_SELECTED)
+  } else if (node!.classList.contains(BTN_SELECTED)) {
     model.selectedTerms.delete(id)
 
     // both nodes need to be selected
     for (let term of model.terms) {
       if (!model.selectedTerms.has(term)) {
         let termNode = getById(term)
-        termNode!.classList.remove(btnSelected, BUTTON_INACTIVE)
+        termNode!.classList.remove(BTN_SELECTED, BUTTON_INACTIVE)
         termNode!.classList.add(BUTTON_NEED_SELECT)
         termNode!.removeAttribute('disabled')
 
-        let termMinNode = getById(term[0] + MIN_SUFFIX)
-        let termMaxNode = getById(term[0] + MAX_SUFFIX)
+        let termMinNode = getById(`${term[0]}_${MIN_SUFFIX}`)
+        let termMaxNode = getById(`${term[0]}_${MAX_SUFFIX}`)
 
         termMinNode!.removeAttribute('disabled')
         termMaxNode!.removeAttribute('disabled')
@@ -274,7 +339,7 @@ function toggleTerm(id: string) {
   } else if (node!.classList.contains(BUTTON_NEED_SELECT)) {
     model.selectedTerms.add(id)
     node!.classList.remove(BUTTON_NEED_SELECT)
-    node!.classList.add(btnSelected)
+    node!.classList.add(BTN_SELECTED)
   }
   if (model.selectedTerms.size === 2) {
     selectThird()
@@ -296,10 +361,10 @@ function selectThird() {
 
   // that the third term is selected isn't recorded in the model
   let node = getById(t)
-  let nodeMin = getById(t[0] + MIN_SUFFIX)
-  let nodeMax = getById(t[0] + MAX_SUFFIX)
+  let nodeMin = getById(`${t[0]}_${MIN_SUFFIX}`)
+  let nodeMax = getById(`${t[0]}_${MAX_SUFFIX}`)
 
-  node!.classList.remove(BUTTON_NEED_SELECT, btnUnselected)
+  node!.classList.remove(BUTTON_NEED_SELECT, BTN_UNSELECTED)
   node!.classList.add(BUTTON_INACTIVE)
 
   let range = getRange()
@@ -381,12 +446,12 @@ function getRange() {
 function toggleOperation(id: string) {
   let opNode = getById(id)
   if (model.selectedOperations.has(id)) {
-    opNode!.classList.remove(btnSelected)
-    opNode!.classList.add(btnUnselected)
+    opNode!.classList.remove(BTN_SELECTED)
+    opNode!.classList.add(BTN_UNSELECTED)
     model.selectedOperations.delete(id)
   } else {
-    opNode!.classList.remove(btnUnselected)
-    opNode!.classList.add(btnSelected)
+    opNode!.classList.remove(BTN_UNSELECTED)
+    opNode!.classList.add(BTN_SELECTED)
     model.selectedOperations.add(id)
   }
 }
@@ -402,12 +467,12 @@ function setInitial() {
 function toggleComparison(id: string) {
   let compNode = getById(id)
   if (model.selectedComparisons.has(id)) {
-    compNode!.classList.remove(btnSelected)
-    compNode!.classList.add(btnUnselected)
+    compNode!.classList.remove(BTN_SELECTED)
+    compNode!.classList.add(BTN_UNSELECTED)
     model.selectedComparisons.delete(id)
   } else {
-    compNode!.classList.remove(btnUnselected)
-    compNode!.classList.add(btnSelected)
+    compNode!.classList.remove(BTN_UNSELECTED)
+    compNode!.classList.add(BTN_SELECTED)
     model.selectedComparisons.add(id)
   }
 }
@@ -421,15 +486,14 @@ function initTerms() {
   selectThird()
   setInitial()
   selectThird()
+  startListenToKeys()
 }
 
-initTerms()
-
 export {
-  addDigit,
+  addDigitOrMinus as addDigit,
   deleteDigit,
   validateInput,
-  updateSettingsOpen,
+  toggleSettingsOpen as updateSettingsOpen,
   toggleComparison,
   toggleOperation,
   toggleTerm,
