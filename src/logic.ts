@@ -1,216 +1,222 @@
-let no_value = '?'
 
-var model: {
+interface Model {
   correct: number
   incorrect: number
-  settings_open: boolean
-  selected_terms: Set<string>
+  settingsOpen: boolean
+  selectedTerms: Set<string>
   terms: Array<string>
   operations: Array<string>
   comparisons: Array<string>
-  selected_operations: Set<string>
-  selected_comparisons: Set<string>
-  valid_ranges: Set<string>
+  selectedOperations: Set<string>
+  selectedComparisons: Set<string>
+  validRanges: Set<string>
 }
 
-model.correct = 0
-model.incorrect = 0
+// model.correct = 0
+// model.incorrect = 0
 
 // handle settings open
 
-model.settings_open = false
+// model.settings_open = false
+let noValue = '?'
 
-let key_codes = get_keycodes()
+let keyCodes = getKeycodes()
 
-let btn_selected = 'btn-primary'
-let btn_unselected = 'btn-outline-primary'
+let btnSelected = 'btn-primary'
+let btnUnselected = 'btn-outline-primary'
 
-model.selected_terms = new Set()
+let A_TERM_ID = 'a_term'
+let B_TERM_ID = 'b_term'
+let C_TERM_ID = 'c_term'
 
-let a_term_id = 'a_term'
-let b_term_id = 'b_term'
-let c_term_id = 'c_term'
+let A_NUMBER_ID = 'a_number'
+let B_NUMBER_ID = 'b_number'
+let C_NUMBER_ID = 'c_number'
 
-let a_number_id = 'a_number'
-let b_number_id = 'b_number'
-let c_number_id = 'c_number'
+let A_MIN_ID = 'a_min'
+let B_MIN_ID = 'b_min'
+let C_MIN_ID = 'c_min'
 
-model.terms = [a_term_id, b_term_id, c_term_id]
+let A_MAX_ID = 'a_max'
+let B_MAX_ID = 'b_max'
+let C_MAX_ID = 'c_max'
 
-let a_min_id = 'a_min'
-let b_min_id = 'b_min'
-let c_min_id = 'c_min'
+let MIN_SUFFIX = '_min'
+let MAX_SUFFIX = '_max'
+let NUMBER_SUFFIX = '_number'
 
-let a_max_id = 'a_max'
-let b_max_id = 'b_max'
-let c_max_id = 'c_max'
+let BUTTON_NEED_SELECT = 'btn-danger'
+let BUTTON_INACTIVE = 'btn-secondary'
 
-let min_suffix = '_min'
-let max_suffix = '_max'
-let number_suffix = '_number'
+let PLUS = 'plus'
+let MINUS = 'minus'
+let TIMES = 'times'
+let DIVIDE = 'divide'
 
-let btn_need_select = 'btn-danger'
-let btn_inactive = 'btn-secondary'
+let EQ = 'eq'
+let GEQ = 'geq'
+let LEQ = 'leq'
+let LT = 'lt'
+let GT = 'gt'
+let INFINITY = '?'
 
-let plus = 'plus'
-let minus = 'minus'
-let times = 'times'
-let divide = 'divide'
+var model: Model = {
+  correct: 0,
+  incorrect: 0,
+  settingsOpen: false,
+  selectedTerms: new Set(),
+  terms: [A_TERM_ID, B_TERM_ID, C_TERM_ID],
+  operations: [PLUS, MINUS, TIMES, DIVIDE],
+  selectedOperations: new Set(),
+  comparisons: [EQ, GEQ, LEQ, LT, GT],
+  selectedComparisons: new Set(),
+  validRanges: new Set(),
+}
 
-model.operations = [plus, minus, times, divide]
-model.selected_operations = new Set()
+// function get_unknown_term() {
+//   if (model.selected_terms.size === 2) {
+//     for (let t of model.terms) {
+//       if (!model.selected_terms.has(t)) {
+//         return t
+//       }
+//     }
+//   }
+//   return NaN
+// }
 
-let eq = 'eq'
-let geq = 'geq'
-let leq = 'leq'
-let lt = 'lt'
-let gt = 'gt'
-let infinity = '?'
+function getById(id: string) {
+  return document.getElementById(id)
+}
 
-model.comparisons = [eq, geq, leq, lt, gt]
-model.selected_comparisons = new Set()
-
-model.valid_ranges = new Set()
-
-function get_unknown_term() {
-  if (model.selected_terms.size === 2) {
-    for (let t of model.terms) {
-      if (!model.selected_terms.has(t)) {
-        return t
-      }
+function addDigit(i: string) {
+  let answerNode = getById(C_NUMBER_ID)
+  let currentAnswer = answerNode!.textContent
+  if (currentAnswer === noValue) {
+    currentAnswer = ''
+  }
+  let newAnswer = currentAnswer!.concat(i.toString())
+  if (!isNaN(parseInt(newAnswer)) && model.selectedTerms.size == 2) {
+    if (model.validRanges.has(i)) {
+      answerNode!.textContent = newAnswer
     }
+  }
+  validateAnswer(newAnswer)
+}
+
+function deleteDigit() {
+  let answerNode = getById(C_NUMBER_ID)
+  let currentAnswer = answerNode!.textContent
+  let newAnswer = currentAnswer!.slice(0, -1)
+  answerNode!.textContent = newAnswer
+}
+
+function parseIntNode(id: string) {
+  let node = getById(id)
+  if (node != null && node.textContent != null) {
+    return parseInt(node.textContent)
   }
   return NaN
 }
 
-function add_digit(i: string) {
-  let answer_node = document.getElementById(c_number_id)
-  let current_answer = answer_node.textContent
-  if (current_answer === no_value) {
-    current_answer = ''
-  }
-  let new_answer = current_answer.concat(i.toString())
-  if (!isNaN(parseInt(new_answer)) && model.selected_terms.size == 2) {
-    if (model.valid_ranges.has(i)) {
-      answer_node.textContent = new_answer
-    }
-  }
-  validate_answer(new_answer)
-}
-
-function delete_digit() {
-  let answer_node = document.getElementById(c_number_id)
-  let current_answer = answer_node.textContent
-  let new_answer = current_answer.slice(0, -1)
-  answer_node.textContent = new_answer
-}
-
-function validate_answer(answer: string) {
-  let first_number = parseInt(document.getElementById(a_number_id).textContent)
-  let second_number = parseInt(document.getElementById(b_number_id).textContent)
-  let result = first_number + second_number
-  let result_string = result.toString()
-  if (result_string.length === answer.length) {
-    if (result_string !== answer) {
-      setTimeout(show_correct_answer, 1000, result_string)
-      let answer_node = document.getElementById(c_number_id)
-      answer_node.style.color = 'red'
+function validateAnswer(answer: string) {
+  let number1 = parseIntNode(A_NUMBER_ID)
+  let number2 = parseIntNode(B_NUMBER_ID)
+  let result = number1 + number2
+  let resultString = result.toString()
+  if (resultString.length === answer.length) {
+    if (resultString !== answer) {
+      setTimeout(showCorrectAnswer, 1000, resultString)
+      let answerNode = getById(C_NUMBER_ID)
+      answerNode!.style.color = 'red'
       model.incorrect += 1
     } else {
       model.correct += 1
     }
-    setTimeout(update_counters, 1000)
-    setTimeout(set_new_task, 2000)
+    setTimeout(updateCounters, 1000)
+    setTimeout(setNewTask, 2000)
   }
 }
 
-function show_correct_answer(answer: string) {
-  let answer_node = document.getElementById(c_number_id)
-  answer_node.style.color = 'green'
-  answer_node.textContent = answer
+function showCorrectAnswer(answer: string) {
+  let answerNode = getById(C_NUMBER_ID)
+  answerNode!.style.color = 'green'
+  answerNode!.textContent = answer
 }
 
 // random number between min and max+1
-function get_random_integer(min: number, max: number) {
+function getRandomInteger(min: number, max: number) {
   let rand = min + Math.random() * (max + 1 - min)
   return Math.floor(rand)
 }
 
-function set_new_task() {
+function setNewTask() {
   for (let t of model.terms) {
-    if (model.selected_terms.has(t)) {
-      let t_min = parseInt(
-        document.getElementById(t[0] + min_suffix).textContent
-      )
-      let t_max = parseInt(
-        document.getElementById(t[0] + max_suffix).textContent
-      )
+    if (model.selectedTerms.has(t)) {
+      let tMin = parseIntNode(t[0] + MIN_SUFFIX)
+      let tMax = parseIntNode(t[0] + MAX_SUFFIX)
 
-      let number_node = document.getElementById(t[0] + number_suffix)
+      let numberNode = getById(t[0] + NUMBER_SUFFIX)
 
-      if (isNaN(t_min) || isNaN(t_max)) {
-        number_node.textContent = no_value
+      if (isNaN(tMin) || isNaN(tMax)) {
+        numberNode!.textContent = noValue
       } else {
-        number_node.textContent = get_random_integer(t_min, t_max).toString()
+        numberNode!.textContent = getRandomInteger(tMin, tMax).toString()
       }
     } else {
-      // set no_value
-      let number_node = document.getElementById(t[0] + number_suffix)
-      number_node.textContent = no_value
-      number_node.removeAttribute('style')
+      let numberNode = getById(t[0] + NUMBER_SUFFIX)
+      numberNode!.textContent = noValue
+      numberNode!.removeAttribute('style')
     }
   }
 }
 
-function update_counters() {
-  document.getElementById('correct').textContent = model.correct.toString()
-  document.getElementById('incorrect').textContent = model.incorrect.toString()
+function updateCounters() {
+  getById('correct')!.textContent = model.correct.toString()
+  getById('incorrect')!.textContent = model.incorrect.toString()
 }
 
-function update_settings_open() {
-  model.settings_open = !model.settings_open
+function updateSettingsOpen() {
+  model.settingsOpen = !model.settingsOpen
 }
 
 // handle key presses
 
-function get_keycodes() {
-  let key_codes = new Map()
+function getKeycodes() {
+  let keyCodes = new Map()
 
   for (let i = 0; i <= 9; i++) {
-    key_codes.set(48 + i, i)
+    keyCodes.set(48 + i, i)
   }
 
   let backspace = 'backspace'
 
-  key_codes.set(8, backspace)
-  return key_codes
+  keyCodes.set(8, backspace)
+  return keyCodes
 }
 
 document.addEventListener('keydown', function (event) {
-  if (key_codes.has(event.keyCode) && model.settings_open === false) {
-    let value = key_codes.get(event.keyCode)
+  if (keyCodes.has(event.keyCode) && model.settingsOpen === false) {
+    let value = keyCodes.get(event.keyCode)
     if (value === 'backspace') {
-      delete_digit()
+      deleteDigit()
     } else {
-      add_digit(value)
+      addDigit(value)
     }
   }
 })
 
-function insert_after(new_node: HTMLElement, reference_node: HTMLElement) {
-  reference_node.parentNode.insertBefore(new_node, reference_node.nextSibling)
+function insertAfter(newNode: HTMLElement, referenceNode: HTMLElement) {
+  if (referenceNode.parentNode != null) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling)
+  }
 }
 
-function disable_if_invalid_range(id: string) {
-  let node_min = parseInt(
-    document.getElementById(id[0] + min_suffix).textContent
-  )
-  let node_max = parseInt(
-    document.getElementById(id[0] + max_suffix).textContent
-  )
+function disableIfInvalidRange(id: string) {
+  let nodeMin = parseIntNode(id[0] + MIN_SUFFIX)
+  let nodeMax = parseInt(id[0] + MAX_SUFFIX)
 
-  if (isNaN(node_min) || isNaN(node_max)) {
-    model.valid_ranges.delete(id)
+  if (isNaN(nodeMin) || isNaN(nodeMax)) {
+    model.validRanges.delete(id)
   }
 }
 
@@ -219,90 +225,90 @@ function disable_if_invalid_range(id: string) {
 
 let invalid = 'is-invalid'
 
-function validate_input(id_min: string, id_max: string, id_current: string) {
-  let input1 = document.getElementById(id_min)
-  let input2 = document.getElementById(id_max)
-  let number1 = parseInt(input1.textContent)
-  let number2 = parseInt(input2.textContent)
+function validateInput(idMin: string, idMax: string, idCurrent: string) {
+  let input1 = getById(idMin)
+  let input2 = getById(idMax)
+  let number1 = parseIntNode(idMin)
+  let number2 = parseIntNode(idMax)
   if (number2 < number1) {
-    if (id_min === id_current) {
-      input2.classList.add(invalid)
-      input1.classList.remove(invalid)
-    } else if (id_max === id_current) {
-      input1.classList.add(invalid)
-      input2.classList.remove(invalid)
+    if (idMin === idCurrent) {
+      input2!.classList.add(invalid)
+      input1!.classList.remove(invalid)
+    } else if (idMax === idCurrent) {
+      input1!.classList.add(invalid)
+      input2!.classList.remove(invalid)
     }
   } else {
-    input1.classList.remove(invalid)
-    input2.classList.remove(invalid)
+    input1!.classList.remove(invalid)
+    input2!.classList.remove(invalid)
   }
-  set_new_task()
-  select_third()
+  setNewTask()
+  selectThird()
 }
 
-function toggle_term(id: string) {
-  let node = document.getElementById(id)
+function toggleTerm(id: string) {
+  let node = getById(id)
   // for initial setup
-  if (node.classList.contains(btn_unselected)) {
-    model.selected_terms.add(id)
-    node.classList.remove(btn_unselected)
-    node.classList.add(btn_selected)
-  } else if (node.classList.contains(btn_selected)) {
-    model.selected_terms.delete(id)
+  if (node!.classList.contains(btnUnselected)) {
+    model.selectedTerms.add(id)
+    node!.classList.remove(btnUnselected)
+    node!.classList.add(btnSelected)
+  } else if (node!.classList.contains(btnSelected)) {
+    model.selectedTerms.delete(id)
 
     // both nodes need to be selected
     for (let term of model.terms) {
-      if (!model.selected_terms.has(term)) {
-        let term_node = document.getElementById(term)
-        term_node.classList.remove(btn_selected, btn_inactive)
-        term_node.classList.add(btn_need_select)
-        term_node.removeAttribute('disabled')
+      if (!model.selectedTerms.has(term)) {
+        let termNode = getById(term)
+        termNode!.classList.remove(btnSelected, BUTTON_INACTIVE)
+        termNode!.classList.add(BUTTON_NEED_SELECT)
+        termNode!.removeAttribute('disabled')
 
-        let term_min_node = document.getElementById(term[0] + min_suffix)
-        let term_max_node = document.getElementById(term[0] + max_suffix)
+        let termMinNode = getById(term[0] + MIN_SUFFIX)
+        let termMaxNode = getById(term[0] + MAX_SUFFIX)
 
-        term_min_node.removeAttribute('disabled')
-        term_max_node.removeAttribute('disabled')
+        termMinNode!.removeAttribute('disabled')
+        termMaxNode!.removeAttribute('disabled')
       }
     }
-  } else if (node.classList.contains(btn_need_select)) {
-    model.selected_terms.add(id)
-    node.classList.remove(btn_need_select)
-    node.classList.add(btn_selected)
+  } else if (node!.classList.contains(BUTTON_NEED_SELECT)) {
+    model.selectedTerms.add(id)
+    node!.classList.remove(BUTTON_NEED_SELECT)
+    node!.classList.add(btnSelected)
   }
-  if (model.selected_terms.size === 2) {
-    select_third()
+  if (model.selectedTerms.size === 2) {
+    selectThird()
   }
 }
 
-function select_third() {
-  if (model.selected_terms.size < 2) {
+function selectThird() {
+  if (model.selectedTerms.size < 2) {
     return
   }
 
-  let t = ""
+  let t = ''
   for (let term of model.terms) {
-    if (!model.selected_terms.has(term)) {
+    if (!model.selectedTerms.has(term)) {
       t = term
       break
     }
   }
 
   // that the third term is selected isn't recorded in the model
-  let node = document.getElementById(t)
-  let node_min = document.getElementById(t[0] + min_suffix)
-  let node_max = document.getElementById(t[0] + max_suffix)
+  let node = getById(t)
+  let nodeMin = getById(t[0] + MIN_SUFFIX)
+  let nodeMax = getById(t[0] + MAX_SUFFIX)
 
-  node.classList.remove(btn_need_select, btn_unselected)
-  node.classList.add(btn_inactive)
+  node!.classList.remove(BUTTON_NEED_SELECT, btnUnselected)
+  node!.classList.add(BUTTON_INACTIVE)
 
-  let range = get_range()
-  node_min.textContent = isNaN(range.min) ? infinity : range.min.toString()
-  node_max.textContent = isNaN(range.max) ? infinity : range.max.toString()
-  disable_if_invalid_range(t)
+  let range = getRange()
+  nodeMin!.textContent = isNaN(range.min) ? INFINITY : range.min.toString()
+  nodeMax!.textContent = isNaN(range.max) ? INFINITY : range.max.toString()
+  disableIfInvalidRange(t)
 
-  node_min.setAttribute('disabled', 'true')
-  node_max.setAttribute('disabled', 'true')
+  nodeMin!.setAttribute('disabled', 'true')
+  nodeMax!.setAttribute('disabled', 'true')
 }
 
 // given terms for
@@ -310,51 +316,51 @@ function select_third() {
 //  a and c, determine range for b
 //  b and c, determine range for a
 
-function get_range() {
-  let terms = model.selected_terms
-  let operations = model.selected_operations
-  if (terms.has(a_term_id) && terms.has(b_term_id)) {
-    let a_min = parseInt(document.getElementById(a_min_id).textContent)
-    let b_min = parseInt(document.getElementById(b_min_id).textContent)
-    let a_max = parseInt(document.getElementById(a_max_id).textContent)
-    let b_max = parseInt(document.getElementById(b_max_id).textContent)
+function getRange() {
+  let terms = model.selectedTerms
+  let operations = model.selectedOperations
+  if (terms.has(A_TERM_ID) && terms.has(B_TERM_ID)) {
+    let aMin = parseIntNode(A_MIN_ID)
+    let bMin = parseIntNode(B_MIN_ID)
+    let aMax = parseIntNode(A_MAX_ID)
+    let bMax = parseIntNode(B_MAX_ID)
 
-    let range_min = Number.MAX_SAFE_INTEGER
-    let range_max = Number.MIN_SAFE_INTEGER
+    let rangeMin = Number.MAX_SAFE_INTEGER
+    let rangeMax = Number.MIN_SAFE_INTEGER
 
-    let a_numbers = [a_min, a_max]
-    let b_numbers = [b_min, b_max]
+    let aNumbers = [aMin, aMax]
+    let bNumbers = [bMin, bMax]
 
     for (let op of model.operations) {
-      if (model.selected_operations.has(op)) {
-        for (let a of a_numbers) {
-          for (let i = 0; i < b_numbers.length; i++) {
-            let b = b_numbers[i]
+      if (model.selectedOperations.has(op)) {
+        for (let a of aNumbers) {
+          for (let i = 0; i < bNumbers.length; i++) {
+            let b = bNumbers[i]
             if (isNaN(a) || isNaN(b)) {
               continue
             }
-            if (op === plus) {
-              range_min = Math.min(range_min, a + b)
-              range_max = Math.max(range_max, a + b)
+            if (op === PLUS) {
+              rangeMin = Math.min(rangeMin, a + b)
+              rangeMax = Math.max(rangeMax, a + b)
             }
-            if (op === minus) {
-              range_min = Math.min(range_min, a - b)
-              range_max = Math.max(range_max, a - b)
+            if (op === MINUS) {
+              rangeMin = Math.min(rangeMin, a - b)
+              rangeMax = Math.max(rangeMax, a - b)
             }
-            if (op === times) {
-              range_min = Math.min(range_min, a * b)
-              range_max = Math.max(range_max, a * b)
+            if (op === TIMES) {
+              rangeMin = Math.min(rangeMin, a * b)
+              rangeMax = Math.max(rangeMax, a * b)
             }
-            if (op === divide) {
-              if (b_min === 0 && b_max === 0) {
+            if (op === DIVIDE) {
+              if (bMin === 0 && bMax === 0) {
                 continue
               }
-              let b_number = b
+              let bNumber = b
               if (b === 0) {
-                b_number = i === 0 ? 1 : -1
+                bNumber = i === 0 ? 1 : -1
               }
-              range_min = Math.min(range_min, Math.ceil(a / b_number))
-              range_max = Math.max(range_max, Math.floor(a / b_number))
+              rangeMin = Math.min(rangeMin, Math.ceil(a / bNumber))
+              rangeMax = Math.max(rangeMax, Math.floor(a / bNumber))
             }
           }
         }
@@ -362,8 +368,8 @@ function get_range() {
     }
 
     return {
-      min: range_min === Number.MAX_SAFE_INTEGER ? NaN : range_min,
-      max: range_max === Number.MIN_SAFE_INTEGER ? NaN : range_max,
+      min: rangeMin === Number.MAX_SAFE_INTEGER ? NaN : rangeMin,
+      max: rangeMax === Number.MIN_SAFE_INTEGER ? NaN : rangeMax,
     }
   } else
     return {
@@ -372,49 +378,60 @@ function get_range() {
     }
 }
 
-function toggle_operation(id: string) {
-  let op_node = document.getElementById(id)
-  if (model.selected_operations.has(id)) {
-    op_node.classList.remove(btn_selected)
-    op_node.classList.add(btn_unselected)
-    model.selected_operations.delete(id)
+function toggleOperation(id: string) {
+  let opNode = getById(id)
+  if (model.selectedOperations.has(id)) {
+    opNode!.classList.remove(btnSelected)
+    opNode!.classList.add(btnUnselected)
+    model.selectedOperations.delete(id)
   } else {
-    op_node.classList.remove(btn_unselected)
-    op_node.classList.add(btn_selected)
-    model.selected_operations.add(id)
+    opNode!.classList.remove(btnUnselected)
+    opNode!.classList.add(btnSelected)
+    model.selectedOperations.add(id)
   }
 }
 
-function set_initial() {
-  document.getElementById(a_min_id).textContent = '0'
-  document.getElementById(a_max_id).textContent = '10'
-  document.getElementById(b_min_id).textContent = '0'
-  document.getElementById(b_max_id).textContent = '10'
-  set_new_task()
+function setInitial() {
+  getById(A_MIN_ID)!.textContent = '0'
+  getById(A_MAX_ID)!.textContent = '10'
+  getById(B_MIN_ID)!.textContent = '0'
+  getById(B_MAX_ID)!.textContent = '10'
+  setNewTask()
 }
 
-function toggle_comparison(id: string) {
-  let comp_node = document.getElementById(id)
-  if (model.selected_comparisons.has(id)) {
-    comp_node.classList.remove(btn_selected)
-    comp_node.classList.add(btn_unselected)
-    model.selected_comparisons.delete(id)
+function toggleComparison(id: string) {
+  let compNode = getById(id)
+  if (model.selectedComparisons.has(id)) {
+    compNode!.classList.remove(btnSelected)
+    compNode!.classList.add(btnUnselected)
+    model.selectedComparisons.delete(id)
   } else {
-    comp_node.classList.remove(btn_unselected)
-    comp_node.classList.add(btn_selected)
-    model.selected_comparisons.add(id)
+    compNode!.classList.remove(btnUnselected)
+    compNode!.classList.add(btnSelected)
+    model.selectedComparisons.add(id)
   }
 }
 
-function init_terms() {
-  toggle_term(a_term_id)
-  toggle_term(b_term_id)
-  toggle_operation(plus)
-  select_third()
-  toggle_comparison(eq)
-  select_third()
-  set_initial()
-  select_third()
+function initTerms() {
+  toggleTerm(A_TERM_ID)
+  toggleTerm(B_TERM_ID)
+  toggleOperation(PLUS)
+  selectThird()
+  toggleComparison(EQ)
+  selectThird()
+  setInitial()
+  selectThird()
 }
 
-init_terms()
+initTerms()
+
+export {
+  addDigit,
+  deleteDigit,
+  validateInput,
+  updateSettingsOpen,
+  toggleComparison,
+  toggleOperation,
+  toggleTerm,
+  initTerms,
+}
