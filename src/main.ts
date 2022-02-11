@@ -1,8 +1,8 @@
 import {
-  addDigit,
-  deleteDigit,
-  validateInput,
-  updateSettingsOpen,
+  addSymbol,
+  deleteSymbol,
+  handleInput,
+  toggleSettingsOpen,
   toggleComparison,
   toggleOperation,
   toggleTerm,
@@ -10,13 +10,12 @@ import {
 } from './logic'
 
 export {
-    addDigit,
-    deleteDigit,
-    validateInput,
-    updateSettingsOpen,
-    toggleComparison,
-    toggleOperation,
-    toggleTerm,
-    initTerms
-  } 
-  
+  addSymbol,
+  deleteSymbol,
+  handleInput,
+  toggleSettingsOpen,
+  toggleComparison,
+  toggleOperation,
+  toggleTerm,
+  initTerms,
+}

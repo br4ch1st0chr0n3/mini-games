@@ -21,7 +21,7 @@
     <div class="row justify-content-center pb-2 pt-4">
       <div class="col-3 fixed my-auto">
         <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom"
-          aria-controls="offcanvasBottom" onclick="updateSettingsOpen()">
+          aria-controls="offcanvasBottom" onclick="toggleSettingsOpen()">
           <i class="bi bi-gear-fill icon"></i>
         </button>
       </div>
@@ -48,17 +48,17 @@
     <div id="keyboard">
       <div class="row justify-content-center pt-2 pb-2">
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(1)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('1')">
             1
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(2)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('2')">
             2
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(3)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('3')">
             3
           </button>
         </div>
@@ -66,17 +66,17 @@
 
       <div class="row justify-content-center pt-2 pb-2">
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(4)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('4')">
             4
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(5)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('5')">
             5
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(6)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('6')">
             6
           </button>
         </div>
@@ -84,17 +84,17 @@
 
       <div class="row justify-content-center pt-2 pb-2">
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(7)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('7')">
             7
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(8)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('8')">
             8
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(9)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('9')">
             9
           </button>
         </div>
@@ -102,16 +102,20 @@
 
       <div class="row justify-content-center pt-2 pb-2">
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="deleteDigit()">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="deleteSymbol()">
             <i class="bi bi-backspace-fill"></i>
           </button>
         </div>
         <div class="col-3 d-grid fixed">
-          <button class="btn btn-secondary btn-square mx-auto" onclick="addDigit(0)">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('0')">
             0
           </button>
         </div>
-        <div class="col-3 d-grid fixed"></div>
+        <div class="col-3 d-grid fixed">
+          <button class="btn btn-secondary btn-square mx-auto" onclick="addSymbol('-')">
+            &minus;
+          </button>
+        </div>
       </div>
 
       <div class="offcanvas offcanvas-bottom h-50" tabindex="-1" id="offcanvasBottom"
@@ -123,7 +127,7 @@
               Settings
             </h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"
-              onclick="updateSettingsOpen()"></button>
+              onclick="toggleSettingsOpen()"></button>
           </div>
         </div>
         <div class="offcanvas-body" id="settings_body">
@@ -132,18 +136,18 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="a_min" placeholder="0" value="0"
-                      oninput="validateInput('a','min')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_min" placeholder="0" value="0"
+                      oninput="handleInput('a','min')" />
                     <label for="a_min">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center pb-2">
-                  <button class="btn btn-outline-primary" id="a_term" onclick="toggleTerm('a_term')">a</button>
+                  <button class="btn btn-outline-primary" id="a_term" onclick="toggleTerm('a')">a</button>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="a_max" placeholder="0" value="10"
-                      oninput="validateInput('a','max')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_max" placeholder="0" value="10"
+                      oninput="handleInput('a','max')" />
                     <label for="a_max">Max</label>
                   </div>
                 </div>
@@ -154,12 +158,10 @@
                     <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('plus')" id="plus">
                       &plus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('minus')"
-                      id="minus">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('minus')" id="minus">
                       &minus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('times')"
-                      id="times">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('times')" id="times">
                       &times;
                     </button>
                     <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('divide')"
@@ -173,20 +175,20 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="b_min" placeholder="0" value="0"
-                      oninput="validateInput('b','min')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_min" placeholder="0" value="0"
+                      oninput="handleInput('b','min')" />
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
                   <div class="pb-2">
-                    <button class="btn btn-outline-primary" id="b_term" onclick="toggleTerm('b_term')">b</button>
+                    <button class="btn btn-outline-primary" id="b_term" onclick="toggleTerm('b')">b</button>
                   </div>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="b_max" placeholder="0" value="10"
-                      oninput="validateInput('a','max')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_max" placeholder="0" value="10"
+                      oninput="handleInput('b','max')" />
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>
@@ -217,20 +219,20 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="c_min" placeholder="0" value="0"
-                      oninput="validateInput('c','min')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_min" placeholder="0" value="0"
+                      oninput="handleInput('c','min')" />
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
                   <div class="pb-2">
-                    <button class="btn btn-outline-primary" id="c_term" onclick="toggleTerm('c_term')">c</button>
+                    <button class="btn btn-outline-primary" id="c_term" onclick="toggleTerm('c')">c</button>
                   </div>
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" class="form-control" id="c_max" placeholder="0" value="10"
-                      oninput="validateInput('c','max')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_max" placeholder="0" value="10"
+                      oninput="handleInput('c','max')" />
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>
@@ -243,11 +245,11 @@
   </div>
   <script src="app.js"></script>
   <script>
-    let updateSettingsOpen = app.updateSettingsOpen
-    let addDigit = app.addDigit
-    let deleteDigit = app.deleteDigit
+    let toggleSettingsOpen = app.toggleSettingsOpen
+    let addSymbol = app.addSymbol
+    let deleteSymbol = app.deleteSymbol
     let toggleOperation = app.toggleOperation
-    let validateInput = app.validateInput
+    let handleInput = app.handleInput
     let toggleTerm = app.toggleTerm
     app.initTerms()
   </script>

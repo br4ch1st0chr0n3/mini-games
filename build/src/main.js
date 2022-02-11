@@ -1,2 +1,2 @@
-import { addDigit, deleteDigit, validateInput, updateSettingsOpen, toggleComparison, toggleOperation, toggleTerm, initTerms, } from './logic';
-export { addDigit, deleteDigit, validateInput, updateSettingsOpen, toggleComparison, toggleOperation, toggleTerm, initTerms };
+import { addSymbol, deleteSymbol, handleInput, toggleSettingsOpen, toggleComparison, toggleOperation, toggleTerm, initTerms, } from './logic';
+export { addSymbol, deleteSymbol, handleInput, toggleSettingsOpen, toggleComparison, toggleOperation, toggleTerm, initTerms, };
