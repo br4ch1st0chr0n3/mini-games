@@ -1,0 +1,23 @@
+{
+  "name": "mini-games",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/br4ch1st0chr0n3/mini-games.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/br4ch1st0chr0n3/mini-games/issues"
+  },
+  "homepage": "https://github.com/br4ch1st0chr0n3/mini-games#readme"
+}
