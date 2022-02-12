@@ -361,20 +361,6 @@ function insertAfter(newNode: HTMLElement, referenceNode: HTMLElement) {
   }
 }
 
-// function updateIfValidRange(id: string) {
-//   let nodeMin = parseIntNode(`${id[0]}_${MIN_SUFFIX}`)
-//   let nodeMax = parseIntNode(`${id[0]}_${MAX_SUFFIX}`)
-
-//   if (isNaN(nodeMin) || isNaN(nodeMax)) {
-//     model.validRanges.delete(id)
-//   } else {
-//     model.validRanges.add(id)
-//   }
-// }
-
-// validate that min value is less than max
-// show error
-
 let INVALID = 'is-invalid'
 
 function update() {
@@ -386,12 +372,6 @@ function handleInput(termLetter: string, suffix: string) {
   validateInput(termLetter, suffix)
   update()
 }
-
-// function removeClass(node: HTMLElement, className: string) {
-//   while (node.classList.contains(className)) {
-//     node.classList.remove(className)
-//   }
-// }
 
 function validateInput(termName: string, suffix: string) {
   let idMin = `${termName}_${MIN_SUFFIX}`
@@ -492,8 +472,6 @@ function maybeSetThird() {
   let range = getRange()
   nodeMin!.value = isNaN(range.min) ? EMPTY_STRING : range.min.toString()
   nodeMax!.value = isNaN(range.max) ? EMPTY_STRING : range.max.toString()
-  // console.log(range)
-  // updateIfValidRange(t)
 
   nodeMin!.setAttribute(DISABLED, 'true')
   nodeMax!.setAttribute(DISABLED, 'true')
