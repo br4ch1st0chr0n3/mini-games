@@ -64,7 +64,7 @@ var app = (function (exports) {
         number2: NaN,
         correctAnswer: NaN,
         currentAnswer: EMPTY_STRING,
-        isDisabledKeyboard: false
+        isDisabledKeyboard: false,
     };
     function getById(id) {
         return document.getElementById(id);
@@ -277,27 +277,34 @@ var app = (function (exports) {
         validateInput(termLetter, suffix);
         update();
     }
-    function validateInput(termLetter, suffix) {
-        let idMin = `${termLetter}_${MIN_SUFFIX}`;
-        let idMax = `${termLetter}_${MAX_SUFFIX}`;
-        let idCurrent = `${termLetter}_${suffix}`;
+    function validateInput(termName, suffix) {
+        let idMin = `${termName}_${MIN_SUFFIX}`;
+        let idMax = `${termName}_${MAX_SUFFIX}`;
+        let idCurrent = `${termName}_${suffix}`;
         let input1 = getById(idMin);
         let input2 = getById(idMax);
         let number1 = parseIntNode(idMin);
         let number2 = parseIntNode(idMax);
-        if (number2 < number1) {
-            if (idMin === idCurrent) {
-                input2.classList.add(INVALID);
-                input1.classList.remove(INVALID);
-            }
-            else if (idMax === idCurrent) {
-                input1.classList.add(INVALID);
-                input2.classList.remove(INVALID);
-            }
-        }
-        else {
+        // console.log("number22")
+        if (!isNaN(number1) && !isNaN(number2) && number1 <= number2) {
             input1.classList.remove(INVALID);
             input2.classList.remove(INVALID);
+        }
+        else if (isNaN(number1) && !isNaN(number2)) {
+            input1.classList.add(INVALID);
+        }
+        else if (!isNaN(number1) && isNaN(number2)) {
+            input2.classList.add(INVALID);
+        }
+        else if (isNaN(number1) && isNaN(number2)) {
+            input1.classList.add(INVALID);
+            input2.classList.add(INVALID);
+        }
+        else if (idMin == idCurrent) {
+            input2.classList.add(INVALID);
+        }
+        else {
+            input1.classList.add(INVALID);
         }
     }
     function initialEnableTerm(id) {
@@ -357,7 +364,7 @@ var app = (function (exports) {
         let range = getRange();
         nodeMin.value = isNaN(range.min) ? EMPTY_STRING : range.min.toString();
         nodeMax.value = isNaN(range.max) ? EMPTY_STRING : range.max.toString();
-        console.log(range);
+        // console.log(range)
         // updateIfValidRange(t)
         nodeMin.setAttribute(DISABLED, 'true');
         nodeMax.setAttribute(DISABLED, 'true');
@@ -371,44 +378,46 @@ var app = (function (exports) {
             min: NaN,
             max: NaN,
         };
-        if (model.selectedTerms.has(A_TERM_ID) &&
-            model.selectedTerms.has(B_TERM_ID)) {
-            let aMin = parseIntNode(A_MIN_ID);
-            let bMin = parseIntNode(B_MIN_ID);
-            let aMax = parseIntNode(A_MAX_ID);
-            let bMax = parseIntNode(B_MAX_ID);
-            console.log(aMin, bMin, aMax, bMax);
-            let rangeMin = Number.MAX_SAFE_INTEGER;
-            let rangeMax = Number.MIN_SAFE_INTEGER;
-            let aNumbers = [aMin, aMax];
-            let bNumbers = [bMin, bMax];
+        if (model.unknownTerm == null) {
+            return ans;
+        }
+        let [id1, id2] = Array.from(model.selectedTerms);
+        let numbers1 = [
+            parseIntNode(`${id1[0]}_${MIN_SUFFIX}`),
+            parseIntNode(`${id1[0]}_${MAX_SUFFIX}`),
+        ];
+        let numbers2 = [
+            parseIntNode(`${id2[0]}_${MIN_SUFFIX}`),
+            parseIntNode(`${id2[0]}_${MAX_SUFFIX}`),
+        ];
+        let rangeMin = Number.MAX_SAFE_INTEGER;
+        let rangeMax = Number.MIN_SAFE_INTEGER;
+        if (model.unknownTerm == C_TERM_ID) {
+            let [bMin, bMax] = numbers2;
             for (let op of model.operations) {
                 if (model.selectedOperations.has(op)) {
-                    for (let a of aNumbers) {
-                        for (let i = 0; i < bNumbers.length; i++) {
-                            let b = bNumbers[i];
-                            // if (isNaN(a) || isNaN(b)) {
-                            //   continue
-                            // }
-                            if (op === PLUS) {
+                    for (let a of numbers1) {
+                        for (let i = 0; i < numbers2.length; i++) {
+                            let b = numbers2[i];
+                            if (op == PLUS) {
                                 rangeMin = Math.min(rangeMin, a + b);
                                 rangeMax = Math.max(rangeMax, a + b);
                             }
-                            if (op === MINUS) {
+                            if (op == MINUS) {
                                 rangeMin = Math.min(rangeMin, a - b);
                                 rangeMax = Math.max(rangeMax, a - b);
                             }
-                            if (op === TIMES) {
+                            if (op == TIMES) {
                                 rangeMin = Math.min(rangeMin, a * b);
                                 rangeMax = Math.max(rangeMax, a * b);
                             }
-                            if (op === DIVIDE) {
-                                if (bMin === 0 && bMax === 0) {
+                            if (op == DIVIDE) {
+                                if (bMin == 0 && bMax == 0) {
                                     continue;
                                 }
                                 let bNumber = b;
-                                if (b === 0) {
-                                    bNumber = i === 0 ? 1 : -1;
+                                if (b == 0) {
+                                    bNumber = i == 0 ? 1 : -1;
                                 }
                                 rangeMin = Math.min(rangeMin, Math.ceil(a / bNumber));
                                 rangeMax = Math.max(rangeMax, Math.floor(a / bNumber));
