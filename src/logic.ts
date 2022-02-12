@@ -28,7 +28,7 @@ interface Model {
 let UNKNOWN = '?'
 let BACKSPACE_CODE = 'Backspace'
 
-let MINUS_SIGN = '-'
+let MINUS_SIGN = '&minus;'
 let MINUS_CODE = 'Minus'
 
 function getKeycodes() {
@@ -45,6 +45,42 @@ function getKeycodes() {
 }
 
 let KEY_CODES = getKeycodes()
+
+let PLUS = 'plus'
+let MINUS = 'minus'
+let TIMES = 'times'
+let DIVIDE = 'divide'
+
+let EQ = 'eq'
+let GEQ = 'geq'
+let LEQ = 'leq'
+let LT = 'lt'
+let GT = 'gt'
+
+function getOperationSigns () {
+  let signs = new Map <string, string>()
+  signs.set(PLUS, '&plus;')
+  signs.set(MINUS, '&plus;')
+  signs.set(TIMES, '&times;')
+  signs.set(DIVIDE, '&divide;')
+  return signs
+}
+
+let OPERATION_SIGNS = getOperationSigns()
+
+function getComparisonSigns () {
+  let signs = new Map <string, string>()
+  signs.set(GEQ, '&geq;')
+  signs.set(EQ, '&equals;')
+  signs.set(LEQ, '&leq;')
+  signs.set(LT, '&lt;')
+  signs.set(GT, '&gt;')
+
+  return signs
+}
+
+let COMPARISON_SIGNS = getComparisonSigns()
+
 
 let BTN_SELECTED = 'btn-primary'
 let BTN_UNSELECTED = 'btn-outline-primary'
@@ -65,6 +101,9 @@ let A_MAX_ID = 'a_max'
 let B_MAX_ID = 'b_max'
 let C_MAX_ID = 'c_max'
 
+let OPERATION_ID = 'operation'
+let COMPARISON_ID = 'comparison'
+
 let MIN_SUFFIX = 'min'
 let MAX_SUFFIX = 'max'
 let NUMBER_SUFFIX = 'number'
@@ -73,16 +112,6 @@ let TERM_SUFFIX = 'term'
 let BUTTON_NEED_SELECT = 'btn-danger'
 let BUTTON_INACTIVE = 'btn-secondary'
 
-let PLUS = 'plus'
-let MINUS = 'minus'
-let TIMES = 'times'
-let DIVIDE = 'divide'
-
-let EQ = 'eq'
-let GEQ = 'geq'
-let LEQ = 'leq'
-let LT = 'lt'
-let GT = 'gt'
 let INFINITY = '?'
 
 let DISABLED = 'disabled'
@@ -161,6 +190,7 @@ function validateAnswer() {
     return
   }
   let correctAnswer = model.correctAnswer.toString()
+  let absoluteCorrectAnswer = Math.abs(model.correctAnswer)
   if (answer.length >= correctAnswer.length) {
     if (correctAnswer != answer) {
       setTimeout(showCorrectAnswer, 1000, correctAnswer)
@@ -239,17 +269,30 @@ function getRandomElement(s: Set<string>) {
 }
 
 function setNewTask() {
-  model.currentAnswer = EMPTY_STRING
   if (model.unknownTerm == null || model.validRanges.size != 2) {
     return
   }
   // don't allow to type until correct configuration is chosen
-  model.isDisabledKeyboard = false
   model.currentOperation = getRandomElement(model.selectedOperations)
   model.currentComparison = getRandomElement(model.selectedComparisons)
   if (model.currentOperation == null || model.currentComparison == null) {
     return
   }
+  model.currentAnswer = EMPTY_STRING
+  model.isDisabledKeyboard = false
+  
+  let operationSign = OPERATION_SIGNS.get(model.currentOperation)
+  if (operationSign != null) {
+    getById(OPERATION_ID)!.innerHTML = operationSign
+  }
+
+  let comparisonSign = COMPARISON_SIGNS.get(model.currentComparison)
+  if (comparisonSign != null) {
+    getById(COMPARISON_ID)!.innerHTML = comparisonSign
+  }
+  
+  console.log(model.selectedComparisons, model.selectedOperations, operationSign, comparisonSign)
+
   if (model.unknownTerm == C_TERM_ID) {
     if (model.currentOperation != DIVIDE) {
       for (let t of model.terms) {

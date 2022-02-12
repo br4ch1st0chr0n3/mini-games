@@ -37,9 +37,9 @@
       <div class="col-10">
         <p class="fw-bolder text-center exercise">
           <span id="a_number">1</span>
-          <span>+</span>
+          <span id="operation">+</span>
           <span id="b_number">1</span>
-          <span>=</span>
+          <span id="comparison">=</span>
           <span id="c_number">?</span>
         </p>
       </div>
@@ -136,8 +136,8 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_min" placeholder="0" value="0"
-                      oninput="handleInput('a','min')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_min" placeholder="0"
+                      value="0" oninput="handleInput('a','min')" />
                     <label for="a_min">Min</label>
                   </div>
                 </div>
@@ -146,8 +146,8 @@
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_max" placeholder="0" value="10"
-                      oninput="handleInput('a','max')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_max" placeholder="0"
+                      value="10" oninput="handleInput('a','max')" />
                     <label for="a_max">Max</label>
                   </div>
                 </div>
@@ -175,8 +175,8 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_min" placeholder="0" value="0"
-                      oninput="handleInput('b','min')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_min" placeholder="0"
+                      value="0" oninput="handleInput('b','min')" />
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
@@ -187,8 +187,8 @@
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_max" placeholder="0" value="10"
-                      oninput="handleInput('b','max')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_max" placeholder="0"
+                      value="10" oninput="handleInput('b','max')" />
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>
@@ -197,19 +197,19 @@
               <div class="row">
                 <div class="col my-auto text-center">
                   <div class="btn-group pb-2" id="comparison_operators">
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('eq')" id="eq">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('eq')" id="eq">
                       &equals;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('leq')" id="leq">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('leq')" id="leq">
                       &leq;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('geq')" id="geq">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('geq')" id="geq">
                       &geq;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('lt')" id="lt">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('lt')" id="lt">
                       &lt;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('gt')" id="gt">
+                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('gt')" id="gt">
                       &gt;
                     </button>
                   </div>
@@ -219,8 +219,8 @@
               <div class="row">
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_min" placeholder="0" value="0"
-                      oninput="handleInput('c','min')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_min" placeholder="0"
+                      value="0" oninput="handleInput('c','min')" />
                     <label for="floatingInputGrid">Min</label>
                   </div>
                 </div>
@@ -231,8 +231,8 @@
                 </div>
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
-                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_max" placeholder="0" value="10"
-                      oninput="handleInput('c','max')" />
+                    <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_max" placeholder="0"
+                      value="10" oninput="handleInput('c','max')" />
                     <label for="floatingInputGrid">Max</label>
                   </div>
                 </div>
@@ -251,6 +251,7 @@
     let toggleOperation = app.toggleOperation
     let handleInput = app.handleInput
     let toggleTerm = app.toggleTerm
+    let toggleComparison = app.toggleComparison
     app.initTerms()
   </script>
 </body>
