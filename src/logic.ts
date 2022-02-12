@@ -115,7 +115,11 @@ function getById(id: string) {
 }
 
 function addSymbol(symbol: string) {
-  if (model.unknownTerm == null || model.isDisabledKeyboard) {
+  if (
+    model.unknownTerm == null ||
+    model.isDisabledKeyboard ||
+    model.validRanges.size != 2
+  ) {
     return
   }
   let newAnswer = model.currentAnswer.concat(symbol)
@@ -235,13 +239,14 @@ function getRandomElement(s: Set<string>) {
 }
 
 function setNewTask() {
-  if (model.unknownTerm == null) {
+  model.currentAnswer = EMPTY_STRING
+  if (model.unknownTerm == null || model.validRanges.size != 2) {
     return
   }
+  // don't allow to type until correct configuration is chosen
   model.isDisabledKeyboard = false
   model.currentOperation = getRandomElement(model.selectedOperations)
   model.currentComparison = getRandomElement(model.selectedComparisons)
-  model.currentAnswer = EMPTY_STRING
   if (model.currentOperation == null || model.currentComparison == null) {
     return
   }
@@ -261,7 +266,11 @@ function setNewTask() {
             } else {
               model.number2 = number
             }
-            numberNode!.textContent = number.toString()
+            let formattedNumber = number.toString()
+            if (number < 0) {
+              formattedNumber = `(${formattedNumber})`
+            }
+            numberNode!.textContent = formattedNumber
           }
         } else {
           numberNode!.textContent = UNKNOWN
@@ -335,6 +344,12 @@ function handleInput(termLetter: string, suffix: string) {
   update()
 }
 
+// function removeClass(node: HTMLElement, className: string) {
+//   while (node.classList.contains(className)) {
+//     node.classList.remove(className)
+//   }
+// }
+
 function validateInput(termName: string, suffix: string) {
   let idMin = `${termName}_${MIN_SUFFIX}`
   let idMax = `${termName}_${MAX_SUFFIX}`
@@ -345,20 +360,30 @@ function validateInput(termName: string, suffix: string) {
   let number2 = parseIntNode(idMax)
   // console.log("number22")
 
-  if (!isNaN(number1) && !isNaN(number2) && number1 <= number2) {
-    input1!.classList.remove(INVALID)
-    input2!.classList.remove(INVALID)
+  if (!isNaN(number1) && !isNaN(number2)) {
+    if (number1 <= number2) {
+      input1!.classList.remove(INVALID)
+      input2!.classList.remove(INVALID)
+      model.validRanges.add(termName)
+    } else if (idMin == idCurrent) {
+      input2!.classList.add(INVALID)
+      model.validRanges.delete(termName)
+    } else if (idMax == idCurrent) {
+      input1!.classList.add(INVALID)
+      model.validRanges.delete(termName)
+    }
   } else if (isNaN(number1) && !isNaN(number2)) {
     input1!.classList.add(INVALID)
+    input2!.classList.remove(INVALID)
+    model.validRanges.delete(termName)
   } else if (!isNaN(number1) && isNaN(number2)) {
     input2!.classList.add(INVALID)
+    input1!.classList.remove(INVALID)
+    model.validRanges.delete(termName)
   } else if (isNaN(number1) && isNaN(number2)) {
     input1!.classList.add(INVALID)
     input2!.classList.add(INVALID)
-  } else if (idMin == idCurrent) {
-    input2!.classList.add(INVALID)
-  } else {
-    input1!.classList.add(INVALID)
+    model.validRanges.delete(termName)
   }
 }
 
@@ -441,7 +466,7 @@ function getRange() {
     min: NaN,
     max: NaN,
   }
-  if (model.unknownTerm == null) {
+  if (model.unknownTerm == null  || model.validRanges.size != 2) {
     return ans
   }
   let [id1, id2] = Array.from(model.selectedTerms)
@@ -479,12 +504,19 @@ function getRange() {
               if (bMin == 0 && bMax == 0) {
                 continue
               }
-              let bNumber = b
-              if (b == 0) {
-                bNumber = i == 0 ? 1 : -1
+              if ((bMin <= 0 && bMax > 0) || (bMin < 0 && bMax >= 0)) {
+                if (bMin <= 0 && bMax > 0) {
+                  rangeMin = Math.min(rangeMin, a)
+                  rangeMax = Math.max(rangeMax, a)
+                } 
+                if (bMin < 0 && bMax >= 0) {
+                  rangeMin = Math.min(rangeMin, -a)
+                  rangeMax = Math.max(rangeMax, -a)
+                }
+              } else {
+                rangeMin = Math.min(rangeMin, Math.ceil(a / b))
+                rangeMax = Math.max(rangeMax, Math.floor(a / b))
               }
-              rangeMin = Math.min(rangeMin, Math.ceil(a / bNumber))
-              rangeMax = Math.max(rangeMax, Math.floor(a / bNumber))
             }
           }
         }
@@ -516,8 +548,10 @@ function toggleOperation(id: string) {
 function setInitial() {
   ;(getById(A_MIN_ID)! as HTMLInputElement).value = '0'
   ;(getById(A_MAX_ID)! as HTMLInputElement).value = '10'
+  validateInput(A_MIN_ID[0], MIN_SUFFIX)
   ;(getById(B_MIN_ID)! as HTMLInputElement).value = '0'
   ;(getById(B_MAX_ID)! as HTMLInputElement).value = '10'
+  validateInput(B_MIN_ID[0], MIN_SUFFIX)
 }
 
 function toggleComparison(id: string) {
