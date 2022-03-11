@@ -28,8 +28,10 @@ interface Model {
 let UNKNOWN = '?'
 let BACKSPACE_CODE = 'Backspace'
 
-let MINUS_SIGN = '&minus;'
+let MINUS_HTML = '&minus;'
 let MINUS_CODE = 'Minus'
+
+let MINUS_SYMBOL = "-"
 
 function getKeycodes() {
   let keyCodes = new Map<string, string>()
@@ -60,7 +62,7 @@ let GT = 'gt'
 function getOperationSigns () {
   let signs = new Map <string, string>()
   signs.set(PLUS, '&plus;')
-  signs.set(MINUS, '&plus;')
+  signs.set(MINUS, '&minus;')
   signs.set(TIMES, '&times;')
   signs.set(DIVIDE, '&divide;')
   return signs
@@ -152,7 +154,7 @@ function addSymbol(symbol: string) {
     return
   }
   let newAnswer = model.currentAnswer.concat(symbol)
-  if (!isNaN(parseInt(newAnswer)) || newAnswer == MINUS_SIGN) {
+  if (!isNaN(parseInt(newAnswer)) || newAnswer == MINUS_SYMBOL) {
     model.currentAnswer = newAnswer
     let answerNode = getById(`${model.unknownTerm[0]}_${NUMBER_SUFFIX}`)
     answerNode!.textContent = newAnswer
@@ -281,6 +283,7 @@ function setNewTask() {
   model.currentAnswer = EMPTY_STRING
   model.isDisabledKeyboard = false
   
+  // console.log(model.currentOperation)
   let operationSign = OPERATION_SIGNS.get(model.currentOperation)
   if (operationSign != null) {
     getById(OPERATION_ID)!.innerHTML = operationSign
@@ -291,7 +294,7 @@ function setNewTask() {
     getById(COMPARISON_ID)!.innerHTML = comparisonSign
   }
   
-  console.log(model.selectedComparisons, model.selectedOperations, operationSign, comparisonSign)
+  // console.log(model.selectedComparisons, model.selectedOperations, operationSign, comparisonSign)
 
   if (model.unknownTerm == C_TERM_ID) {
     if (model.currentOperation != DIVIDE) {
@@ -347,7 +350,7 @@ function startListenToKeys() {
       if (code == BACKSPACE_CODE) {
         deleteSymbol()
       } else if (code == MINUS_CODE) {
-        addSymbol(MINUS_SIGN)
+        addSymbol(MINUS_HTML)
       } else if (code != null) {
         addSymbol(code)
       }
