@@ -124,7 +124,7 @@
         <div class="row justify-content-center">
           <div class="offcanvas-header col settings ms-2 me-2">
             <h5 class="offcanvas-title" id="offcanvasBottomLabel">
-              Settings
+              Настройки
             </h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"
               onclick="toggleSettingsOpen()"></button>
@@ -138,7 +138,7 @@
                   <div class="form-floating pb-2">
                     <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_min" placeholder="0"
                       value="0" oninput="handleInput('a','min')" />
-                    <label for="a_min">Min</label>
+                    <label for="a_min">Мин</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center pb-2">
@@ -148,26 +148,26 @@
                   <div class="form-floating pb-2">
                     <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="a_max" placeholder="0"
                       value="10" oninput="handleInput('a','max')" />
-                    <label for="a_max">Max</label>
+                    <label for="a_max">Макс</label>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col my-auto text-center">
                   <div class="btn-group pb-2" id="arithmetical_operators">
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('plus')" id="plus">
+                    <button type="button" class="btn btn-outline-primary nohover" onclick="toggleOperation('plus')" id="plus">
                       &plus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('minus')" id="minus">
+                    <button type="button" class="btn btn-outline-primary nohover" onclick="toggleOperation('minus')" id="minus">
                       &minus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('times')" id="times">
+                    <button type="button" class="btn btn-outline-primary nohover" onclick="toggleOperation('times')" id="times">
                       &times;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('divide')"
+                    <!-- <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('divide')"
                       id="divide">
                       &divide;
-                    </button>
+                    </button> -->
                   </div>
                 </div>
               </div>
@@ -176,8 +176,8 @@
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
                     <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_min" placeholder="0"
-                      value="0" oninput="handleInput('b','min')" />
-                    <label for="floatingInputGrid">Min</label>
+                      value="0" oninput="handleInput('b','min')" onchange="handleInput('b','min')" />
+                    <label for="floatingInputGrid">Мин</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
@@ -188,8 +188,8 @@
                 <div class="col-5 my-auto text-center">
                   <div class="form-floating pb-2">
                     <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="b_max" placeholder="0"
-                      value="10" oninput="handleInput('b','max')" />
-                    <label for="floatingInputGrid">Max</label>
+                      value="10" oninput="handleInput('b','max')" onchange="handleInput('b','max')" />
+                    <label for="floatingInputGrid">Макс</label>
                   </div>
                 </div>
               </div>
@@ -197,10 +197,10 @@
               <div class="row">
                 <div class="col my-auto text-center">
                   <div class="btn-group pb-2" id="comparison_operators">
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('eq')" id="eq">
+                    <button type="button" class="btn btn-outline-primary" id="eq">
                       &equals;
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('leq')" id="leq">
+                    <!-- <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('leq')" id="leq">
                       &leq;
                     </button>
                     <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('geq')" id="geq">
@@ -211,7 +211,7 @@
                     </button>
                     <button type="button" class="btn btn-outline-primary" onclick="toggleComparison('gt')" id="gt">
                       &gt;
-                    </button>
+                    </button> -->
                   </div>
                 </div>
               </div>
@@ -221,7 +221,7 @@
                   <div class="form-floating pb-2">
                     <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_min" placeholder="0"
                       value="0" oninput="handleInput('c','min')" />
-                    <label for="floatingInputGrid">Min</label>
+                    <label for="floatingInputGrid">Мин</label>
                   </div>
                 </div>
                 <div class="col-2 my-auto text-center">
@@ -233,7 +233,7 @@
                   <div class="form-floating pb-2">
                     <input type="number" pattern="^0|[1-9][0-9]*$" class="form-control" id="c_max" placeholder="0"
                       value="10" oninput="handleInput('c','max')" />
-                    <label for="floatingInputGrid">Max</label>
+                    <label for="floatingInputGrid">Макс</label>
                   </div>
                 </div>
               </div>

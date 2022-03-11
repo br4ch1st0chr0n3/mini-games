@@ -62,7 +62,6 @@ var app = (function (exports) {
     let MIN_SUFFIX = 'min';
     let MAX_SUFFIX = 'max';
     let NUMBER_SUFFIX = 'number';
-    let TERM_SUFFIX = 'term';
     let BUTTON_NEED_SELECT = 'btn-danger';
     let BUTTON_INACTIVE = 'btn-secondary';
     let DISABLED = 'disabled';
@@ -295,8 +294,14 @@ var app = (function (exports) {
         });
     }
     let INVALID = 'is-invalid';
+    function resetScore() {
+        model.correct = 0;
+        model.incorrect = 0;
+        updateCounters();
+    }
     function update() {
         maybeSetThird();
+        resetScore();
         setNewTask();
     }
     function handleInput(termLetter, suffix) {
@@ -349,33 +354,12 @@ var app = (function (exports) {
         node.classList.add(BTN_SELECTED);
         model.selectedTerms.add(id);
     }
-    function toggleTerm(termName) {
-        let id = `${termName}_${TERM_SUFFIX}`;
+    function initialDisableTermButton(id) {
         let node = getById(id);
-        // for initial setup
-        if (model.selectedTerms.has(id)) {
-            model.selectedTerms.delete(id);
-            model.unknownTerm = null;
-            // both nodes need to be selected
-            for (let term of model.terms) {
-                if (!model.selectedTerms.has(term)) {
-                    let termNode = getById(term);
-                    termNode.classList.remove(BTN_SELECTED, BUTTON_INACTIVE);
-                    termNode.classList.add(BUTTON_NEED_SELECT);
-                    termNode.removeAttribute(DISABLED);
-                    let termMinNode = getById(`${term[0]}_${MIN_SUFFIX}`);
-                    let termMaxNode = getById(`${term[0]}_${MAX_SUFFIX}`);
-                    termMinNode.removeAttribute(DISABLED);
-                    termMaxNode.removeAttribute(DISABLED);
-                }
-            }
-        }
-        else {
-            model.selectedTerms.add(id);
-            node.classList.remove(BUTTON_NEED_SELECT);
-            node.classList.add(BTN_SELECTED);
-            maybeSetThird();
-        }
+        node.classList.add(DISABLED);
+    }
+    function toggleTerm(termName) {
+        return;
     }
     function maybeSetThird() {
         if (model.selectedTerms.size == 2) {
@@ -496,6 +480,7 @@ var app = (function (exports) {
         validateInput(B_MIN_ID[0], MIN_SUFFIX);
     }
     function toggleComparison(id) {
+        // return
         let node = getById(id);
         if (model.selectedComparisons.has(id)) {
             node.classList.remove(BTN_SELECTED);
@@ -511,9 +496,12 @@ var app = (function (exports) {
     }
     function initTerms() {
         initialEnableTerm(A_TERM_ID);
+        initialDisableTermButton(A_TERM_ID);
         initialEnableTerm(B_TERM_ID);
+        initialDisableTermButton(B_TERM_ID);
         toggleOperation(PLUS);
         toggleComparison(EQ);
+        initialDisableTermButton(EQ);
         setInitial();
         maybeSetThird();
         setNewTask();

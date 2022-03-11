@@ -363,8 +363,15 @@ function insertAfter(newNode: HTMLElement, referenceNode: HTMLElement) {
 
 let INVALID = 'is-invalid'
 
+function resetScore() {
+  model.correct = 0
+  model.incorrect = 0
+  updateCounters()
+}
+
 function update() {
   maybeSetThird()
+  resetScore()
   setNewTask()
 }
 
@@ -417,7 +424,14 @@ function initialEnableTerm(id: string) {
   model.selectedTerms.add(id)
 }
 
+function initialDisableTermButton(id: string) {
+  let node = getById(id)
+  node!.classList.add(DISABLED)
+}
+
+
 function toggleTerm(termName: string) {
+  return
   let id = `${termName}_${TERM_SUFFIX}`
   let node = getById(id)
   // for initial setup
@@ -576,6 +590,7 @@ function setInitial() {
 }
 
 function toggleComparison(id: string) {
+  // return
   let node = getById(id)
   if (model.selectedComparisons.has(id)) {
     node!.classList.remove(BTN_SELECTED)
@@ -591,9 +606,12 @@ function toggleComparison(id: string) {
 
 function initTerms() {
   initialEnableTerm(A_TERM_ID)
+  initialDisableTermButton(A_TERM_ID)
   initialEnableTerm(B_TERM_ID)
+  initialDisableTermButton(B_TERM_ID)
   toggleOperation(PLUS)
   toggleComparison(EQ)
+  initialDisableTermButton(EQ)
   setInitial()
   maybeSetThird()
   setNewTask()

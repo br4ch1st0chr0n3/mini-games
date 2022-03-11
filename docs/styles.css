@@ -25,6 +25,10 @@
   /* min-width: 80%; */
 }
 
+/* .btn:hover, .btn-outline-primary:hover {
+  cursor: default !important;
+} */
+
 .icon {
   font-size: 30px;
   text-align: center;
@@ -40,4 +44,14 @@
 
 .gear {
   color: orange;
+}
+
+.nohover:active {
+  color: white;
+  background-color: blue;
+}
+
+.nohover:hover {
+  color: rgb(255, 255, 255);
+  background-color: rgba(0, 0, 255, 0.493);
 }
