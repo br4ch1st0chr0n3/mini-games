@@ -350,6 +350,7 @@ var app = (function (exports) {
     }
     function initialEnableTerm(id) {
         let node = getById(id);
+        // node!.classList.toggle(ACTIVE)
         node.classList.remove(BTN_UNSELECTED);
         node.classList.add(BTN_SELECTED);
         model.selectedTerms.add(id);
@@ -358,8 +359,34 @@ var app = (function (exports) {
         let node = getById(id);
         node.classList.add(DISABLED);
     }
+    const ACTIVE = 'act';
     function toggleTerm(termName) {
         return;
+        // let id = `${termName}_${TERM_SUFFIX}`
+        // let node = getById(id)
+        // // for initial setup
+        // if (model.selectedTerms.has(id)) {
+        //   model.selectedTerms.delete(id)
+        //   model.unknownTerm = null
+        //   // both nodes need to be selected
+        //   for (let term of model.terms) {
+        //     if (!model.selectedTerms.has(term)) {
+        //       let termNode = getById(term)
+        //       termNode!.classList.remove(BTN_SELECTED, BUTTON_INACTIVE)
+        //       termNode!.classList.add(BUTTON_NEED_SELECT)
+        //       termNode!.removeAttribute(DISABLED)
+        //       let termMinNode = getById(`${term[0]}_${MIN_SUFFIX}`)
+        //       let termMaxNode = getById(`${term[0]}_${MAX_SUFFIX}`)
+        //       termMinNode!.removeAttribute(DISABLED)
+        //       termMaxNode!.removeAttribute(DISABLED)
+        //     }
+        //   }
+        // } else {
+        //   model.selectedTerms.add(id)
+        //   node!.classList.remove(BUTTON_NEED_SELECT)
+        //   node!.classList.add(BTN_SELECTED)
+        //   maybeSetThird()
+        // }
     }
     function maybeSetThird() {
         if (model.selectedTerms.size == 2) {
@@ -459,14 +486,15 @@ var app = (function (exports) {
     }
     function toggleOperation(id) {
         let node = getById(id);
+        node.classList.toggle(ACTIVE);
         if (model.selectedOperations.has(id)) {
-            node.classList.remove(BTN_SELECTED);
-            node.classList.add(BTN_UNSELECTED);
+            // node!.classList.remove(BTN_SELECTED)
+            // node!.classList.add(BTN_UNSELECTED)
             model.selectedOperations.delete(id);
         }
         else {
-            node.classList.remove(BTN_UNSELECTED);
-            node.classList.add(BTN_SELECTED);
+            // node!.classList.remove(BTN_UNSELECTED)
+            // node!.classList.add(BTN_SELECTED)
             model.selectedOperations.add(id);
         }
         update();
@@ -482,6 +510,7 @@ var app = (function (exports) {
     function toggleComparison(id) {
         // return
         let node = getById(id);
+        node.classList.toggle(ACTIVE);
         if (model.selectedComparisons.has(id)) {
             node.classList.remove(BTN_SELECTED);
             node.classList.add(BTN_UNSELECTED);
@@ -504,6 +533,7 @@ var app = (function (exports) {
         initialDisableTermButton(EQ);
         setInitial();
         maybeSetThird();
+        // initialDisableTermButton(EQ)
         setNewTask();
         startListenToKeys();
     }

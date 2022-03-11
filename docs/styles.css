@@ -46,12 +46,19 @@
   color: orange;
 }
 
-.nohover:active {
-  color: white;
-  background-color: blue;
+
+.nohover {
+  position: relative;
+  padding: 0.5em 1em;
+  border: 0;
+  border-radius: 0.5em;
+  background-color: white;
+  color: blue;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
 }
 
-.nohover:hover {
-  color: rgb(255, 255, 255);
-  background-color: rgba(0, 0, 255, 0.493);
+.nohover:active, .act {
+  background-color: blue;
+  color: white;
 }

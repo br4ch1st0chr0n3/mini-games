@@ -118,6 +118,7 @@
         </div>
       </div>
 
+
       <div class="offcanvas offcanvas-bottom h-75" tabindex="-1" id="offcanvasBottom"
         aria-labelledby="offcanvasBottomLabel">
         <!-- <div> -->
@@ -154,14 +155,14 @@
               </div>
               <div class="row">
                 <div class="col my-auto text-center">
-                  <div class="btn-group pb-2" id="arithmetical_operators">
-                    <button type="button" class="btn btn-outline-primary nohover" onclick="toggleOperation('plus')" id="plus">
+                  <div class="pb-2" id="arithmetical_operators">
+                    <button class="nohover" onclick="toggleOperation('plus')" id="plus">
                       &plus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary nohover" onclick="toggleOperation('minus')" id="minus">
+                    <button class="nohover" onclick="toggleOperation('minus')" id="minus">
                       &minus;
                     </button>
-                    <button type="button" class="btn btn-outline-primary nohover" onclick="toggleOperation('times')" id="times">
+                    <button class="nohover" onclick="toggleOperation('times')" id="times">
                       &times;
                     </button>
                     <!-- <button type="button" class="btn btn-outline-primary" onclick="toggleOperation('divide')"
@@ -243,7 +244,23 @@
       </div>
     </div>
   </div>
+
+  <script>
+
+    var buttons = document.querySelectorAll('.nohover');
+    console.log(buttons)
+
+    // for (let i = 0; i < buttons.length; i++) {
+    //   let k = buttons[i]
+    //   k.addEventListener('click', () => {
+    //     k.classList.toggle('act');
+    //   });
+    // }
+
+  </script>
+
   <script src="app.js"></script>
+  
   <script>
     let toggleSettingsOpen = app.toggleSettingsOpen
     let addSymbol = app.addSymbol
