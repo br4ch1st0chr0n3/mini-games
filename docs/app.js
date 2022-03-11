@@ -93,7 +93,9 @@ var app = (function (exports) {
     function addSymbol(symbol) {
         if (model.unknownTerm == null ||
             model.isDisabledKeyboard ||
-            model.validRanges.size != 2) {
+            model.validRanges.size != 2 ||
+            model.selectedOperations.size == 0 ||
+            model.selectedComparisons.size == 0) {
             return;
         }
         let newAnswer = model.currentAnswer.concat(symbol);
