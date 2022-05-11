@@ -7,8 +7,9 @@ var app = (function (exports) {
     // model.settings_open = false
     let UNKNOWN = '?';
     let BACKSPACE_CODE = 'Backspace';
-    let MINUS_SIGN = '&minus;';
+    let MINUS_HTML = '&minus;';
     let MINUS_CODE = 'Minus';
+    let MINUS_SYMBOL = "-";
     function getKeycodes() {
         let keyCodes = new Map();
         for (let i = 0; i <= 9; i++) {
@@ -31,7 +32,7 @@ var app = (function (exports) {
     function getOperationSigns() {
         let signs = new Map();
         signs.set(PLUS, '&plus;');
-        signs.set(MINUS, '&plus;');
+        signs.set(MINUS, '&minus;');
         signs.set(TIMES, '&times;');
         signs.set(DIVIDE, '&divide;');
         return signs;
@@ -62,7 +63,6 @@ var app = (function (exports) {
     let MIN_SUFFIX = 'min';
     let MAX_SUFFIX = 'max';
     let NUMBER_SUFFIX = 'number';
-    let TERM_SUFFIX = 'term';
     let BUTTON_NEED_SELECT = 'btn-danger';
     let BUTTON_INACTIVE = 'btn-secondary';
     let DISABLED = 'disabled';
@@ -93,11 +93,13 @@ var app = (function (exports) {
     function addSymbol(symbol) {
         if (model.unknownTerm == null ||
             model.isDisabledKeyboard ||
-            model.validRanges.size != 2) {
+            model.validRanges.size != 2 ||
+            model.selectedOperations.size == 0 ||
+            model.selectedComparisons.size == 0) {
             return;
         }
         let newAnswer = model.currentAnswer.concat(symbol);
-        if (!isNaN(parseInt(newAnswer)) || newAnswer == MINUS_SIGN) {
+        if (!isNaN(parseInt(newAnswer)) || newAnswer == MINUS_SYMBOL) {
             model.currentAnswer = newAnswer;
             let answerNode = getById(`${model.unknownTerm[0]}_${NUMBER_SUFFIX}`);
             answerNode.textContent = newAnswer;
@@ -224,6 +226,7 @@ var app = (function (exports) {
         }
         model.currentAnswer = EMPTY_STRING;
         model.isDisabledKeyboard = false;
+        // console.log(model.currentOperation)
         let operationSign = OPERATION_SIGNS.get(model.currentOperation);
         if (operationSign != null) {
             getById(OPERATION_ID).innerHTML = operationSign;
@@ -232,7 +235,7 @@ var app = (function (exports) {
         if (comparisonSign != null) {
             getById(COMPARISON_ID).innerHTML = comparisonSign;
         }
-        console.log(model.selectedComparisons, model.selectedOperations, operationSign, comparisonSign);
+        // console.log(model.selectedComparisons, model.selectedOperations, operationSign, comparisonSign)
         if (model.unknownTerm == C_TERM_ID) {
             if (model.currentOperation != DIVIDE) {
                 for (let t of model.terms) {
@@ -286,7 +289,7 @@ var app = (function (exports) {
                     deleteSymbol();
                 }
                 else if (code == MINUS_CODE) {
-                    addSymbol(MINUS_SIGN);
+                    addSymbol(MINUS_HTML);
                 }
                 else if (code != null) {
                     addSymbol(code);
@@ -295,8 +298,14 @@ var app = (function (exports) {
         });
     }
     let INVALID = 'is-invalid';
+    function resetScore() {
+        model.correct = 0;
+        model.incorrect = 0;
+        updateCounters();
+    }
     function update() {
         maybeSetThird();
+        resetScore();
         setNewTask();
     }
     function handleInput(termLetter, suffix) {
@@ -345,37 +354,43 @@ var app = (function (exports) {
     }
     function initialEnableTerm(id) {
         let node = getById(id);
+        // node!.classList.toggle(ACTIVE)
         node.classList.remove(BTN_UNSELECTED);
         node.classList.add(BTN_SELECTED);
         model.selectedTerms.add(id);
     }
-    function toggleTerm(termName) {
-        let id = `${termName}_${TERM_SUFFIX}`;
+    function initialDisableTermButton(id) {
         let node = getById(id);
-        // for initial setup
-        if (model.selectedTerms.has(id)) {
-            model.selectedTerms.delete(id);
-            model.unknownTerm = null;
-            // both nodes need to be selected
-            for (let term of model.terms) {
-                if (!model.selectedTerms.has(term)) {
-                    let termNode = getById(term);
-                    termNode.classList.remove(BTN_SELECTED, BUTTON_INACTIVE);
-                    termNode.classList.add(BUTTON_NEED_SELECT);
-                    termNode.removeAttribute(DISABLED);
-                    let termMinNode = getById(`${term[0]}_${MIN_SUFFIX}`);
-                    let termMaxNode = getById(`${term[0]}_${MAX_SUFFIX}`);
-                    termMinNode.removeAttribute(DISABLED);
-                    termMaxNode.removeAttribute(DISABLED);
-                }
-            }
-        }
-        else {
-            model.selectedTerms.add(id);
-            node.classList.remove(BUTTON_NEED_SELECT);
-            node.classList.add(BTN_SELECTED);
-            maybeSetThird();
-        }
+        node.classList.add(DISABLED);
+    }
+    const ACTIVE = 'act';
+    function toggleTerm(termName) {
+        return;
+        // let id = `${termName}_${TERM_SUFFIX}`
+        // let node = getById(id)
+        // // for initial setup
+        // if (model.selectedTerms.has(id)) {
+        //   model.selectedTerms.delete(id)
+        //   model.unknownTerm = null
+        //   // both nodes need to be selected
+        //   for (let term of model.terms) {
+        //     if (!model.selectedTerms.has(term)) {
+        //       let termNode = getById(term)
+        //       termNode!.classList.remove(BTN_SELECTED, BUTTON_INACTIVE)
+        //       termNode!.classList.add(BUTTON_NEED_SELECT)
+        //       termNode!.removeAttribute(DISABLED)
+        //       let termMinNode = getById(`${term[0]}_${MIN_SUFFIX}`)
+        //       let termMaxNode = getById(`${term[0]}_${MAX_SUFFIX}`)
+        //       termMinNode!.removeAttribute(DISABLED)
+        //       termMaxNode!.removeAttribute(DISABLED)
+        //     }
+        //   }
+        // } else {
+        //   model.selectedTerms.add(id)
+        //   node!.classList.remove(BUTTON_NEED_SELECT)
+        //   node!.classList.add(BTN_SELECTED)
+        //   maybeSetThird()
+        // }
     }
     function maybeSetThird() {
         if (model.selectedTerms.size == 2) {
@@ -475,14 +490,15 @@ var app = (function (exports) {
     }
     function toggleOperation(id) {
         let node = getById(id);
+        node.classList.toggle(ACTIVE);
         if (model.selectedOperations.has(id)) {
-            node.classList.remove(BTN_SELECTED);
-            node.classList.add(BTN_UNSELECTED);
+            // node!.classList.remove(BTN_SELECTED)
+            // node!.classList.add(BTN_UNSELECTED)
             model.selectedOperations.delete(id);
         }
         else {
-            node.classList.remove(BTN_UNSELECTED);
-            node.classList.add(BTN_SELECTED);
+            // node!.classList.remove(BTN_UNSELECTED)
+            // node!.classList.add(BTN_SELECTED)
             model.selectedOperations.add(id);
         }
         update();
@@ -496,7 +512,9 @@ var app = (function (exports) {
         validateInput(B_MIN_ID[0], MIN_SUFFIX);
     }
     function toggleComparison(id) {
+        // return
         let node = getById(id);
+        node.classList.toggle(ACTIVE);
         if (model.selectedComparisons.has(id)) {
             node.classList.remove(BTN_SELECTED);
             node.classList.add(BTN_UNSELECTED);
@@ -511,11 +529,15 @@ var app = (function (exports) {
     }
     function initTerms() {
         initialEnableTerm(A_TERM_ID);
+        initialDisableTermButton(A_TERM_ID);
         initialEnableTerm(B_TERM_ID);
+        initialDisableTermButton(B_TERM_ID);
         toggleOperation(PLUS);
         toggleComparison(EQ);
+        initialDisableTermButton(EQ);
         setInitial();
         maybeSetThird();
+        // initialDisableTermButton(EQ)
         setNewTask();
         startListenToKeys();
     }
