@@ -20,7 +20,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && rollup -c rollup.config.js",
-    "watch": "npm-watch"
+    "watch": "npm-watch & parcel docs/index.html &",
+    "dev": "npm run watch"
   },
   "repository": {
     "type": "git",

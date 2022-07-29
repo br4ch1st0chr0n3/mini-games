@@ -15,5 +15,5 @@ npm i
 ## Development
 
 ```sh
-npm run watch
+npm run dev
 ```
