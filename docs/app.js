@@ -1,15 +1,11 @@
 var app = (function (exports) {
     'use strict';
 
-    // model.correct = 0
-    // model.incorrect = 0
-    // handle settings open
-    // model.settings_open = false
     let UNKNOWN = '?';
     let BACKSPACE_CODE = 'Backspace';
     let MINUS_HTML = '&minus;';
     let MINUS_CODE = 'Minus';
-    let MINUS_SYMBOL = "-";
+    let MINUS_SYMBOL = '-';
     function getKeycodes() {
         let keyCodes = new Map();
         for (let i = 0; i <= 9; i++) {
@@ -47,26 +43,26 @@ var app = (function (exports) {
         signs.set(GT, '&gt;');
         return signs;
     }
-    let COMPARISON_SIGNS = getComparisonSigns();
-    let BTN_SELECTED = 'btn-primary';
-    let BTN_UNSELECTED = 'btn-outline-primary';
-    let A_TERM_ID = 'a_term';
-    let B_TERM_ID = 'b_term';
-    let C_TERM_ID = 'c_term';
-    let C_NUMBER_ID = 'c_number';
-    let A_MIN_ID = 'a_min';
-    let B_MIN_ID = 'b_min';
-    let A_MAX_ID = 'a_max';
-    let B_MAX_ID = 'b_max';
-    let OPERATION_ID = 'operation';
-    let COMPARISON_ID = 'comparison';
-    let MIN_SUFFIX = 'min';
-    let MAX_SUFFIX = 'max';
-    let NUMBER_SUFFIX = 'number';
-    let BUTTON_NEED_SELECT = 'btn-danger';
-    let BUTTON_INACTIVE = 'btn-secondary';
-    let DISABLED = 'disabled';
-    let EMPTY_STRING = '';
+    const COMPARISON_SIGNS = getComparisonSigns();
+    const BTN_SELECTED = 'btn-primary';
+    const BTN_UNSELECTED = 'btn-outline-primary';
+    const A_TERM_ID = 'a_term';
+    const B_TERM_ID = 'b_term';
+    const C_TERM_ID = 'c_term';
+    const C_NUMBER_ID = 'c_number';
+    const A_MIN_ID = 'a_min';
+    const B_MIN_ID = 'b_min';
+    const A_MAX_ID = 'a_max';
+    const B_MAX_ID = 'b_max';
+    const OPERATION_ID = 'operation';
+    const COMPARISON_ID = 'comparison';
+    const MIN_SUFFIX = 'min';
+    const MAX_SUFFIX = 'max';
+    const NUMBER_SUFFIX = 'number';
+    const BUTTON_NEED_SELECT = 'btn-danger';
+    const BUTTON_INACTIVE = 'btn-secondary';
+    const DISABLED = 'disabled';
+    const EMPTY_STRING = '';
     var model = {
         correct: 0,
         incorrect: 0,
@@ -161,8 +157,8 @@ var app = (function (exports) {
     let AC_COMBINATION = 'ac';
     let BC_COMBINATION = 'bc';
     function setCorrectAnswer(combination) {
-        let number1 = model.number1;
-        let number2 = model.number2;
+        const number1 = model.number1;
+        const number2 = model.number2;
         let operationId = model.currentOperation;
         // console.log(number1, number2, operationId)
         let ans = NaN;
@@ -251,8 +247,15 @@ var app = (function (exports) {
                             if (t == A_TERM_ID) {
                                 model.number1 = number;
                             }
-                            else {
+                            else if (t == B_TERM_ID) {
+                                if (model.currentOperation == MINUS) {
+                                    number = getRandomInteger(tMin, model.number1);
+                                    console.log(tMin, model.number1, number);
+                                }
                                 model.number2 = number;
+                            }
+                            else {
+                                console.log("can't set the number in given range");
                             }
                             let formattedNumber = number.toString();
                             if (number < 0) {
@@ -320,7 +323,6 @@ var app = (function (exports) {
         let input2 = getById(idMax);
         let number1 = parseIntNode(idMin);
         let number2 = parseIntNode(idMax);
-        // console.log("number22")
         if (!isNaN(number1) && !isNaN(number2)) {
             if (number1 <= number2) {
                 input1.classList.remove(INVALID);
