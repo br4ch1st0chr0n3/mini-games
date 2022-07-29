@@ -19,19 +19,13 @@ interface Model {
   isDisabledKeyboard: boolean
 }
 
-// model.correct = 0
-// model.incorrect = 0
-
-// handle settings open
-
-// model.settings_open = false
 let UNKNOWN = '?'
 let BACKSPACE_CODE = 'Backspace'
 
 let MINUS_HTML = '&minus;'
 let MINUS_CODE = 'Minus'
 
-let MINUS_SYMBOL = "-"
+let MINUS_SYMBOL = '-'
 
 function getKeycodes() {
   let keyCodes = new Map<string, string>()
@@ -59,8 +53,8 @@ let LEQ = 'leq'
 let LT = 'lt'
 let GT = 'gt'
 
-function getOperationSigns () {
-  let signs = new Map <string, string>()
+function getOperationSigns() {
+  let signs = new Map<string, string>()
   signs.set(PLUS, '&plus;')
   signs.set(MINUS, '&minus;')
   signs.set(TIMES, '&times;')
@@ -70,8 +64,8 @@ function getOperationSigns () {
 
 let OPERATION_SIGNS = getOperationSigns()
 
-function getComparisonSigns () {
-  let signs = new Map <string, string>()
+function getComparisonSigns() {
+  let signs = new Map<string, string>()
   signs.set(GEQ, '&geq;')
   signs.set(EQ, '&equals;')
   signs.set(LEQ, '&leq;')
@@ -81,44 +75,46 @@ function getComparisonSigns () {
   return signs
 }
 
-let COMPARISON_SIGNS = getComparisonSigns()
+const COMPARISON_SIGNS = getComparisonSigns()
 
+const BTN_SELECTED = 'btn-primary'
+const BTN_UNSELECTED = 'btn-outline-primary'
 
-let BTN_SELECTED = 'btn-primary'
-let BTN_UNSELECTED = 'btn-outline-primary'
+const A_TERM_ID = 'a_term'
+const B_TERM_ID = 'b_term'
+const C_TERM_ID = 'c_term'
 
-let A_TERM_ID = 'a_term'
-let B_TERM_ID = 'b_term'
-let C_TERM_ID = 'c_term'
+const A_NUMBER_ID = 'a_number'
+const B_NUMBER_ID = 'b_number'
+const C_NUMBER_ID = 'c_number'
 
-let A_NUMBER_ID = 'a_number'
-let B_NUMBER_ID = 'b_number'
-let C_NUMBER_ID = 'c_number'
+const A = 'a'
+const B = 'b'
 
-let A_MIN_ID = 'a_min'
-let B_MIN_ID = 'b_min'
-let C_MIN_ID = 'c_min'
+const A_MIN_ID = 'a_min'
+const B_MIN_ID = 'b_min'
+const C_MIN_ID = 'c_min'
 
-let A_MAX_ID = 'a_max'
-let B_MAX_ID = 'b_max'
-let C_MAX_ID = 'c_max'
+const A_MAX_ID = 'a_max'
+const B_MAX_ID = 'b_max'
+const C_MAX_ID = 'c_max'
 
-let OPERATION_ID = 'operation'
-let COMPARISON_ID = 'comparison'
+const OPERATION_ID = 'operation'
+const COMPARISON_ID = 'comparison'
 
-let MIN_SUFFIX = 'min'
-let MAX_SUFFIX = 'max'
-let NUMBER_SUFFIX = 'number'
-let TERM_SUFFIX = 'term'
+const MIN_SUFFIX = 'min'
+const MAX_SUFFIX = 'max'
+const NUMBER_SUFFIX = 'number'
+const TERM_SUFFIX = 'term'
 
-let BUTTON_NEED_SELECT = 'btn-danger'
-let BUTTON_INACTIVE = 'btn-secondary'
+const BUTTON_NEED_SELECT = 'btn-danger'
+const BUTTON_INACTIVE = 'btn-secondary'
 
-let INFINITY = '?'
+const INFINITY = '?'
 
-let DISABLED = 'disabled'
+const DISABLED = 'disabled'
 
-let EMPTY_STRING = ''
+const EMPTY_STRING = ''
 
 var model: Model = {
   correct: 0,
@@ -227,8 +223,8 @@ let AC_COMBINATION = 'ac'
 let BC_COMBINATION = 'bc'
 
 function setCorrectAnswer(combination: string) {
-  let number1 = model.number1
-  let number2 = model.number2
+  const number1 = model.number1
+  const number2 = model.number2
   let operationId = model.currentOperation
   // console.log(number1, number2, operationId)
 
@@ -284,7 +280,7 @@ function setNewTask() {
   }
   model.currentAnswer = EMPTY_STRING
   model.isDisabledKeyboard = false
-  
+
   // console.log(model.currentOperation)
   let operationSign = OPERATION_SIGNS.get(model.currentOperation)
   if (operationSign != null) {
@@ -295,7 +291,7 @@ function setNewTask() {
   if (comparisonSign != null) {
     getById(COMPARISON_ID)!.innerHTML = comparisonSign
   }
-  
+
   // console.log(model.selectedComparisons, model.selectedOperations, operationSign, comparisonSign)
 
   if (model.unknownTerm == C_TERM_ID) {
@@ -311,8 +307,14 @@ function setNewTask() {
             let number = getRandomInteger(tMin, tMax)
             if (t == A_TERM_ID) {
               model.number1 = number
-            } else {
+            } else if (t == B_TERM_ID) {
+              if (model.currentOperation == MINUS) {
+                number = getRandomInteger(tMin, model.number1)
+                console.log(tMin, model.number1, number)
+              }
               model.number2 = number
+            } else {
+              console.log("can't set the number in given range")
             }
             let formattedNumber = number.toString()
             if (number < 0) {
@@ -393,7 +395,6 @@ function validateInput(termName: string, suffix: string) {
   let input2 = getById(idMax)
   let number1 = parseIntNode(idMin)
   let number2 = parseIntNode(idMax)
-  // console.log("number22")
 
   if (!isNaN(number1) && !isNaN(number2)) {
     if (number1 <= number2) {
@@ -508,7 +509,7 @@ function getRange() {
     min: NaN,
     max: NaN,
   }
-  if (model.unknownTerm == null  || model.validRanges.size != 2) {
+  if (model.unknownTerm == null || model.validRanges.size != 2) {
     return ans
   }
   let [id1, id2] = Array.from(model.selectedTerms)
@@ -550,7 +551,7 @@ function getRange() {
                 if (bMin <= 0 && bMax > 0) {
                   rangeMin = Math.min(rangeMin, a)
                   rangeMax = Math.max(rangeMax, a)
-                } 
+                }
                 if (bMin < 0 && bMax >= 0) {
                   rangeMin = Math.min(rangeMin, -a)
                   rangeMax = Math.max(rangeMax, -a)
