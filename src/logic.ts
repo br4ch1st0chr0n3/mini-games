@@ -310,7 +310,7 @@ function setNewTask() {
             } else if (t == B_TERM_ID) {
               if (model.currentOperation == MINUS) {
                 number = getRandomInteger(tMin, model.number1)
-                console.log(tMin, model.number1, number)
+                // console.log(tMin, model.number1, number)
               }
               model.number2 = number
             } else {
