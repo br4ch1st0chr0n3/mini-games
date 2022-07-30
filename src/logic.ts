@@ -310,7 +310,7 @@ function setNewTask() {
             } else if (t == B_TERM_ID) {
               if (model.currentOperation == MINUS) {
                 // FIXME
-                // assumes that max for b < max for a
+                // assumes that min for b < min (max for a, max for b)
                 number = getRandomInteger(tMin, Math.min(model.number1, tMax))
               }
               model.number2 = number
