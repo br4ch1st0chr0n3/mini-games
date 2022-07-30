@@ -309,8 +309,9 @@ function setNewTask() {
               model.number1 = number
             } else if (t == B_TERM_ID) {
               if (model.currentOperation == MINUS) {
-                number = getRandomInteger(tMin, model.number1)
-                // console.log(tMin, model.number1, number)
+                // FIXME
+                // assumes that max for b < max for a
+                number = getRandomInteger(tMin, Math.min(model.number1, tMax))
               }
               model.number2 = number
             } else {
