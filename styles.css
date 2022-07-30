@@ -1,0 +1,70 @@
+.btn-square {
+  width: 80px !important;
+  /* max-width: 100% !important; */
+  /* max-height: 100% !important; */
+  height: 80px !important;
+  font-size: 30px;
+  /* text-align: center; */
+  /* padding: 0px; */
+  /* font-size: 12px; */
+}
+
+.settings {
+  max-width: 600px;
+}
+
+.exercise {
+  font-size: 50px;
+}
+
+.fixed {
+  max-width: 100px;
+
+  /* max-width: 80%; */
+  /* max-width: 80vw; */
+  /* min-width: 80%; */
+}
+
+/* .btn:hover, .btn-outline-primary:hover {
+  cursor: default !important;
+} */
+
+.icon {
+  font-size: 30px;
+  text-align: center;
+}
+
+.correct {
+  color: green;
+}
+
+.incorrect {
+  color: red;
+}
+
+.gear {
+  color: orange;
+}
+
+
+.nohover {
+  position: relative;
+  padding: 0.5em 1em;
+  border: 0.2;
+  border-color: #0b5dd78c;
+  border-radius: 0.5em;
+  background-color: white;
+  color: #0b5ed7;
+  /* box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5); */
+  cursor: pointer;
+}
+
+.nohover:active, .act {
+  background-color: #0b5ed7;
+  color: white;
+}
+
+.nohover:hover {
+  border-color: #0b5dd78c;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(0, 0, 255, 0.6);
+}
